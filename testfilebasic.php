@@ -5,16 +5,42 @@ namespace bublak\phpunitmultirunner\Tree;
 
 class Mputree {
     const ABC = 'abc';
+    const EDF = 'abc';
+
+    public static $DEFAULT_COUNT = 20;
 
     private $_nodes = array();
+
+    protected static $OPENSOCIAL_VIEWERID = "opensocial_viewer_id";
 
     private $_isRoot   = false;
     private $_fullPath = null;
     private $_filename = null;
 
+    protected static $_consumerCommunities      = null;
+
+    private static $_instance = null;
+
     private $_execTimeRating = null;
     private $_execTime       = null;
 
+    abstract protected function setDocumentAttribute(DOMElement $document);
+    protected abstract function getConfigData();
+    public abstract function renderHeader(array $preparedHeader);
+    abstract public function renderHeaderb(array $preparedHeader);
+
+    protected static function sortFunction($first, $second, $rules) {
+    }
+
+    public static function getEvaluationBasePath() {
+        return $ble;
+    }
+
+    protected function createDOMDocument() {
+        return $ble;
+    }
+
+    private $_isRoot   = false;
     public function __construct($fullPath, $isRoot=false) {
         $this->_fullPath = $fullPath;
         $this->_isRoot = $isRoot;
