@@ -1,9 +1,12 @@
 import re
 
+#[TODO, pavel.filipcik@intraworlds.com, B] do this - dedicnost
 class CodeNavigate:
 
     # NOTE: last char of line is deleted by processing line, so there should be for example ';'
     def _getNamespacedClass(self, line):
+        self.printd('vstupuju getnamespaced class with line:');
+        self.printd(line);
         #note: if there is not ' as ' -> the -1 value is returned, which caused cutting the ; at the end of line!!!
         line = line[:line.find(' as ')] 
 
@@ -314,6 +317,7 @@ class CodeNavigate:
             self.printd('radek: ' + lines[i])
             self.printd('slovo: ' + word)
             self.printd('bylo nalezeno?: ' + lines[i].find(word).__str__())
+            self.printd(' ');
 
             line = lines[i]
 
@@ -336,8 +340,26 @@ class CodeNavigate:
             if line.find("{") > -1: # namespace definitions ends with class {
                 self.printd(''),
                 self.printd('konec namespace definitions, try current directory:');
-                result = self._getNamespacedClass(namespaceDefLine)
-                #open in current directory
+
+                if namespaceDefLine == False:
+                    #maybe the part of folder, cut the end, and try find again
+                    beforePart = word[word.find('\\'):]
+                    part = word[:word.find('\\')]
+
+                    if len(part) == len(word):
+                        # nic se nezkratilo ==> nenalezeno
+                        return False
+
+                    resultPart = self.getUseNamespacedWord(part, lines, i, '')
+
+                    beforePart = beforePart.replace('\\', '/') #change path separators
+
+                    newResult = resultPart[:resultPart.find('.php')]
+                    newResult = newResult + beforePart + '.php'
+                    return newResult
+                else:
+                    #open in current directory
+                    result = self._getNamespacedClass(namespaceDefLine)
                 break
             elif hasExtendedNamespace == False:
 
@@ -360,7 +382,7 @@ class CodeNavigate:
         self.printd('nasel jsem: ' + result)
         return result
     
-    #def self.printd(string, debug=True):
+    #def printd(self, string, debug=True):
     def printd(self, string, debug=False):
         if debug == True:
             print(string)
