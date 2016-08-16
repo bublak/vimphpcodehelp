@@ -16,6 +16,8 @@ class ClassContextHint:
 
         return False
 
+    # TODO -> would be fine to support all kind of methods -> private methods
+    # ADD tests for private methods
     def getMethodHintForFile(self, filename, functionName, doPrint):
         result = []
 
@@ -24,7 +26,8 @@ class ClassContextHint:
 
         self.loadFunctions(read_data, functionName)
 
-        lineNumber = self.hints.functions[functionName].lineNumber
+        # TODO -> check that exists
+        lineNumber = self.hints.functions[functionName].lineNumber + 1
 
         read_data = read_data[:lineNumber]
 
@@ -97,11 +100,13 @@ class ClassContextHint:
 
         if functionName == False:
             searchFunctionName = '.*'
+            patternWithEnd = '(.*public.*|protected.*) function ('+searchFunctionName+') ?(.*\(.*\).*)[{;]'
+            patternNotEnded = '(.*public.*|protected.*) function '+searchFunctionName+'\(.*'
         else:
             searchFunctionName = functionName+'.*'
+            patternWithEnd = '(.*public.*|protected.*|private.*) function ('+searchFunctionName+') ?(.*\(.*\).*)[{;]'
+            patternNotEnded = '(.*public.*|protected.*|private.*) function '+searchFunctionName+'\(.*'
 
-        patternWithEnd = '(.*public.*|protected.*) function ('+searchFunctionName+') ?(.*\(.*\).*)[{;]'
-        patternNotEnded = '(.*public.*|protected.*) function '+searchFunctionName+'\(.*'
 
         lineToProcess = False
         lineNumber = 0

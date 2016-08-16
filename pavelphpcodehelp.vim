@@ -39,7 +39,7 @@ python << endOfPython
 from ClassContextHint import ClassContextHint
 from CodeNavigate import CodeNavigate
 
-cch = ClassContextHint()
+cch = ClassContextHint("bb") # TODO set path properly
 
 filename = None
 ##################TODO  tohle je stejny jako v CodeNavigate
@@ -78,7 +78,7 @@ python << endOfPython
 from ClassContextHint import ClassContextHint
 from CodeNavigate import CodeNavigate
 
-cch = ClassContextHint()
+cch = ClassContextHint("bb") # TODO set path properly
 
 filename = None
 ##################TODO  tohle je stejny jako v CodeNavigate
@@ -87,20 +87,10 @@ lines = vim.current.buffer
 searchWord = vim.eval("a:sCls")
 lineNumber = int(vim.eval("a:lineNumber"))
 
-#lineNumber = lineNumber - 1 #correction to right line, where is cursor
-#searchWord = searchWord.strip()
-#
-#codeMove = CodeNavigate()
-#result = codeMove.startSearching(searchWord, lines, lineNumber)
-#
-#if result != False:
-#    filename = result
-#else:
-#    print result
-##################TODO  tohle je stejny jako v CodeNavigate
+filename = vim.eval("@%") # TODO -> now is supported only actual file, extend!!
 
 if filename:
-    cch.getMethodHintForFile(filename, True)
+    cch.getMethodHintForFile(filename, searchWord, True)
 
 
 endOfPython
