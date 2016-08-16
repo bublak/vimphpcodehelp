@@ -15,7 +15,7 @@ from CodeNavigate import CodeNavigate
 
 lines = vim.current.buffer
 
-searchWord = vim.eval("a:sCls") 
+searchWord = vim.eval("a:sCls")
 lineNumber = int(vim.eval("a:lineNumber"))
 
 lineNumber = lineNumber - 1 #correction to right line, where is cursor
@@ -45,19 +45,23 @@ filename = None
 ##################TODO  tohle je stejny jako v CodeNavigate
 lines = vim.current.buffer
 
-searchWord = vim.eval("a:sCls") 
+searchWord = vim.eval("a:sCls")
 lineNumber = int(vim.eval("a:lineNumber"))
 
 lineNumber = lineNumber - 1 #correction to right line, where is cursor
 searchWord = searchWord.strip()
 
-codeMove = CodeNavigate()
-result = codeMove.startSearching(searchWord, lines, lineNumber)
-
-if result != False:
-    filename = result
+if searchWord == '':
+    #print "using actual file:"
+    filename = vim.eval("@%")
 else:
-    print result
+    codeMove = CodeNavigate()
+    result = codeMove.startSearching(searchWord, lines, lineNumber)
+
+    if result != False:
+        filename = result
+    else:
+        print result
 ##################TODO  tohle je stejny jako v CodeNavigate
 
 if filename:
@@ -67,3 +71,37 @@ if filename:
 endOfPython
 endfunction
 
+
+function! PavelMethodContextHint(sCls, lineNumber)
+python << endOfPython
+
+from ClassContextHint import ClassContextHint
+from CodeNavigate import CodeNavigate
+
+cch = ClassContextHint()
+
+filename = None
+##################TODO  tohle je stejny jako v CodeNavigate
+lines = vim.current.buffer
+
+searchWord = vim.eval("a:sCls")
+lineNumber = int(vim.eval("a:lineNumber"))
+
+#lineNumber = lineNumber - 1 #correction to right line, where is cursor
+#searchWord = searchWord.strip()
+#
+#codeMove = CodeNavigate()
+#result = codeMove.startSearching(searchWord, lines, lineNumber)
+#
+#if result != False:
+#    filename = result
+#else:
+#    print result
+##################TODO  tohle je stejny jako v CodeNavigate
+
+if filename:
+    cch.getMethodHintForFile(filename, True)
+
+
+endOfPython
+endfunction

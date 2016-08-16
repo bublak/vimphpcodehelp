@@ -1,13 +1,50 @@
 import re
+from ClassData import *
+
+# TODO -> add support for loading the method anotation/description
 
 # The processing expect the well formated php code - basic coding standards :)
 class ClassContextHint:
 
-    #-> pridat rozlisovani co je co v hints -> aby se to dalo radit
-    hints = []
+    hints = None
     
-    def __init__(self):
-        self.hints = []
+    def __init__(self, path):
+        self.hints = ClassData(path)
+
+    def getAncestor(self):
+        # TODO -> add support for extends other class
+
+        return False
+
+    def getMethodHintForFile(self, filename, functionName, doPrint):
+        result = []
+
+        with open(filename, 'r') as f:
+            read_data = f.readlines()
+
+        self.loadFunctions(read_data, functionName)
+
+        lineNumber = self.hints.functions[functionName].lineNumber
+
+        read_data = read_data[:lineNumber]
+
+        read_data.reverse()
+
+        comment = []
+        for line in read_data:
+            if line.find('/**') > -1:
+                comment.append(line);
+                break
+            else:
+                comment.append(line);
+
+        comment.reverse()
+
+        # TODO connect with ClassData element
+        if doPrint:
+            return self._printLines(comment, '')
+        else:
+            return comment
 
     def getContextHintsForFile(self, filename, doPrint):
 
@@ -18,103 +55,123 @@ class ClassContextHint:
             self.getContextHints(read_data)
 
         if doPrint:
-            for line in self.hints:
-                if line != None:
-                    line += "\n"
-
-                    print line
+            return self._printLines(self.hints.getAllPrintable())
         else:
-            return self.hints
+            return self.hints.getAllPrintable()
 
     def getContextHints(self, lines):
         self.loadConstants(lines)
         self.loadFunctions(lines)
 
-        return self.hints
+        return self.hints.getAllPrintable()
 
     def loadConstants(self, lines):
-        #TODO cut the value for some limit length
+
+        constants = []
+
+        lineNumber = 0;
 
         for line in lines:
             newWord = ''
-            pattern = '(const .*=.*);'
+            pattern = '(const) (.*)(=)(.*);'
 
             #printd('pattern: ' + pattern)
             res = re.search(pattern, line)
 
             if res:
-                newWord = res.groups()[0]
-                self.hints.append(newWord.strip())
+                definition = res.groups()[0].strip()
+                name = res.groups()[1].strip()
+                value = res.groups()[3].strip()
 
-        return self.hints
+                self.hints.addConstant(name, value, definition, lineNumber)
+
+            lineNumber += 1
+
+        return self.hints.getConstantsPrintable()
 
     def loadAttributes(self, lines):
         for line in lines:
             print line
 
-    def loadFunctions(self, lines):
-        # TODO bf, abstract functions -> or functions from interface -> dont have curl at the end: {
+    def loadFunctions(self, lines, functionName=False):
+
+        if functionName == False:
+            searchFunctionName = '.*'
+        else:
+            searchFunctionName = functionName+'.*'
+
+        patternWithEnd = '(.*public.*|protected.*) function ('+searchFunctionName+') ?(.*\(.*\).*)[{;]'
+        patternNotEnded = '(.*public.*|protected.*) function '+searchFunctionName+'\(.*'
 
         lineToProcess = False
+        lineNumber = 0
 
         for line in lines:
+            printd('\nzpracovavam line:')
 
-            if line.find("{") > -1: # function definitions ends with {
+            if line.find("{") > -1 or line.find(";") > -1: # function definitions ends with { or ; for interface methods
+                printd('has end ===========')
                 hasEnd = True
             else:
+                printd('has not end ===========')
                 hasEnd = False
 
-            printd('\nzpracovavam line:')
             printd(line)
             newWord = ''
 
-            if lineToProcess == False:
-                if hasEnd == True:
-                    pattern = '.*(public|protected).*function (.*\(.*\).*){'
+            if hasEnd == True:
+                if lineToProcess != False:
+                    lineToProcess += line
+                    lineToProcess = lineToProcess.replace('\n', '')
+                    line = lineToProcess
+                    lineToProcess = False
 
-                    res = re.search(pattern, line)
-                    printd('XXX pattern: ' + pattern)
+                printd('CHECKING LINE WITH END: ')
+                printd(line)
+                wasAdded = self._addFunctionInList(patternWithEnd, line, lineNumber)
 
-                    if res:
-                        printd('xxx pattern found')
-                        newWord = res.groups()[0] + ' ' + res.groups()[1]
-
-                        newWord = newWord.replace('\n', '')
-                        printd ('xxxxxxXXX   pridavam ' + newWord);
-                        self.hints.append(newWord.strip())
-
+                if wasAdded and functionName != False:
+                    return self.hints.getFunctionsPrintable()
+            else:
+                if lineToProcess != False:
+                    lineToProcess += line
                 else:
-                    pattern = '.*(public|protected).*function .*\('
-
-                    printd('XXXbbbbbbb pattern: ' + pattern)
-                    res = re.search(pattern, line)
+                    printd('XXXbbbbbbb pattern: ' + patternNotEnded)
+                    res = re.search(patternNotEnded, line)
 
                     if res:
                         printd('xxxbbbb pattern found - wait to end')
                         lineToProcess = line
-            else:
-                lineToProcess += line
 
-                if hasEnd == True:
-                    pattern = '.*(public|protected).*function (.*\(.*\).*){'
 
-                    lineToProcess = lineToProcess.replace('\n', '')
-                    printd(lineToProcess)
-                    printd('XXX pattern: ' + pattern)
-                    res = re.search(pattern, lineToProcess)
+            lineNumber += 1;
 
-                    if res:
-                        printd('xxx pattern found - wait to end')
-                        newWord = res.groups()[0] + ' ' + res.groups()[1]
+        return self.hints.getFunctionsPrintable()
 
-                        newWord = newWord.replace('\n', '')
-                        printd ('xxxxxxXXX pridavam ' + newWord);
-                        self.hints.append(newWord.strip())
+    def _addFunctionInList(self, pattern, line, lineNumber):
+        printd('XXX pattern for add in list: ' + pattern)
+        res = re.search(pattern, line)
 
-                    lineToProcess = False
+        if res:
+            printd('xxx pattern found')
 
-        return self.hints
+            definition = res.groups()[0].strip()
+            name = res.groups()[1].strip()
+            value = res.groups()[2].replace('\n', '').strip()
+            printd ('xxxxxxXXX pridavam function with name: ' + name);
 
+            self.hints.addFunction(name, value, definition, lineNumber)
+
+            return True
+
+        return False
+
+    def _printLines(self, data, separator="\n"):
+        for line in data:
+            if line != None:
+                line += separator
+
+                print line
 
 #def printd(string, debug=True):
 def printd(string, debug=False):

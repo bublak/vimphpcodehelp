@@ -11,7 +11,7 @@ class Mputree {
 
     private $_nodes = array();
 
-    protected static $OPENSOCIAL_VIEWERID = "opensocial_viewer_id";
+    protected static $OPENSO_VIEWERID = "opl_viewer_id";
 
     private $_isRoot   = false;
     private $_fullPath = null;
@@ -41,6 +41,15 @@ class Mputree {
     }
 
     private $_isRoot   = false;
+
+    /**
+     * method __construct  blaa ble
+     *
+     * @param string $fullPath  full path kva
+     * @param boolean $isRoot    is root flag
+     *
+     * @return void
+     */
     public function __construct($fullPath, $isRoot=false) {
         $this->_fullPath = $fullPath;
         $this->_isRoot = $isRoot;
