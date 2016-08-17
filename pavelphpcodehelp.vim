@@ -72,7 +72,7 @@ endOfPython
 endfunction
 
 
-function! PavelMethodContextHint(sCls, lineNumber)
+function! PavelMethodContextHint(sCls, lineNumber, className)
 python << endOfPython
 
 from ClassContextHint import ClassContextHint
@@ -85,9 +85,37 @@ filename = None
 lines = vim.current.buffer
 
 searchWord = vim.eval("a:sCls")
+className = vim.eval("a:className")
+lineNumber = int(vim.eval("a:lineNumber"))
+print '============= '
+print className
+print searchWord
+print lineNumber
+
 lineNumber = int(vim.eval("a:lineNumber"))
 
-filename = vim.eval("@%") # TODO -> now is supported only actual file, extend!!
+
+filename = None
+##################TODO  tohle je stejny jako v CodeNavigate
+lines = vim.current.buffer
+
+searchWord = vim.eval("a:sCls")
+lineNumber = int(vim.eval("a:lineNumber"))
+
+lineNumber = lineNumber - 1 #correction to right line, where is cursor
+searchWord = searchWord.strip()
+
+if searchWord == '':
+    #print "using actual file:"
+    filename = vim.eval("@%")
+else:
+    codeMove = CodeNavigate()
+    result = codeMove.startSearching(className, lines, lineNumber)
+
+    if result != False:
+        filename = result
+    else:
+        filename = vim.eval("@%")
 
 if filename:
     cch.getMethodHintForFile(filename, searchWord, True)
