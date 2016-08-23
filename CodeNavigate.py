@@ -285,13 +285,16 @@ class CodeNavigate:
 
         # try first find the extended namespace use:  ABCD\EFG\word
         hasExtendedNamespace = False
-        pattern = '([\w\\\\]{1,}' +  word + ')';
+        pattern = '([\w\\\\]*\\\\'+ word +')';
 
         self.printd('hledam pattern: ' + pattern);
+        self.printd('na radce: ' + line);
         self.printd(re.search(pattern, line));
         res = re.search(pattern, line)
         if res:
             hasExtendedNamespace = True
+
+            self.printd('found extended FFFF namespace ' + word)
             word = res.groups()[0]
             self.printd('found extended namespace ' + word)
             
@@ -313,6 +316,8 @@ class CodeNavigate:
             cycleLineNumber += 1
             count += 1
 
+        self.printd('cycle line number: ')
+        self.printd(cycleLineNumber)
         for i in range(0, cycleLineNumber):
             self.printd('radek: ' + lines[i])
             self.printd('slovo: ' + word)
