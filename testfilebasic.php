@@ -3,7 +3,7 @@
 
 namespace bublak\phpunitmultirunner\Tree;
 
-class Mputree {
+class Mputree extends Broumov {
     const ABC = 'abc';
     const EDF = 'abc';
 

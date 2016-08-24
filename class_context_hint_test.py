@@ -4,6 +4,16 @@ from ClassContextHint import ClassContextHint
 
 class TestClassContextHint(unittest.TestCase):
 
+    def test_getAncestor(self):
+        cch = ClassContextHint('cava')
+
+        lines = self._getLinesForAncestor()
+        result = cch.getAncestor(lines)
+
+
+        #TODO controler class User_UserController extends IW_User_Core_Controller
+
+
     def test_loadConstants(self):
         cch = ClassContextHint('test/path/')
 
@@ -136,6 +146,21 @@ class TestClassContextHint(unittest.TestCase):
 
         return a
 
+    def _getLinesForAncestor(self):
+        a = [
+            'namespace afaef\faeggg\affe;',
+            '',
+            'use tada\ble\Def;'
+            '',
+            'class Abc extends Def',
+            '{',
+            '',
+            '',
+            '',
+            ''
+        ] 
+
+        return a
 
 if __name__ == '__main__':
     unittest.main()

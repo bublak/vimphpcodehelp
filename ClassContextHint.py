@@ -1,8 +1,6 @@
 import re
 from ClassData import *
 
-# TODO -> add support for loading the method anotation/description
-
 # The processing expect the well formated php code - basic coding standards :)
 class ClassContextHint:
 
@@ -11,25 +9,60 @@ class ClassContextHint:
     def __init__(self, path):
         self.hints = ClassData(path)
 
-    def getAncestor(self):
+    def getAncestor(self, lines):
         # TODO -> add support for extends other class
+
+        pattern = ' extends(.*)' #TODO do it better
+        # TODO more classes
+        # TODO Test also for implements
+
+        printd(self.hints.path)
+
+        lineNumber = 0
+
+        for line in lines:
+            res = re.search(pattern, line)
+            #printd('\nzpracovavam line:')
+            #printd(line)
+            printd('===============================================')
+
+            if line.find("{") > -1: # end of class definitions
+                break
+
+            if res:
+                printd('je dedicnost: ')
+                newClass = res.groups()[0].strip()
+
+                newClass = newClass.replace('\n', '')
+
+                printd(newClass)
+
+                # TODO only one is supported
+                # TODO magic 3
+                self.hints.parentClass = {'lineNumber': lineNumber, 'name': newClass, 'lines': lines[:lineNumber+3]}
+
+            lineNumber += 1
 
         return False
 
-    # TODO -> would be fine to support all kind of methods -> private methods
-    # ADD tests for private methods
+    # TODO ADD tests for private methods
     def getMethodHintForFile(self, filename, functionName, doPrint):
         result = []
 
         with open(filename, 'r') as f:
             read_data = f.readlines()
 
+        self.getAncestor(read_data)
         self.loadFunctions(read_data, functionName)
 
+        print filename
         # TODO -> check that exists
-        lineNumber = self.hints.functions[functionName].lineNumber + 1
+        if self.hints.functions.has_key(functionName):
+            lineNumber = self.hints.functions[functionName].lineNumber + 1
+        else:
+            return self.hints
 
-        read_data = read_data[:lineNumber]
+        read_data = read_data[:lineNumber+5] # 5 -> show first 5 lines from function
 
         read_data.reverse()
 
@@ -43,24 +76,29 @@ class ClassContextHint:
 
         comment.reverse()
 
-        # TODO connect with ClassData element
         if doPrint:
-            return self._printLines(comment, '')
+            self._printLines(comment, '')
+            return True
         else:
+            # TODO connect with ClassData element !!!!!!!!!!!!!!!!!!
             return comment
 
-    def getContextHintsForFile(self, filename, doPrint):
+    def getContextHintsForFile(self, filename, doPrint=False):
 
         with open(filename, 'r') as f:
             read_data = f.readlines()
 
+        printd('NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN')
         if read_data:
+            printd( '=============== hledam dedicnost')
+            self.getAncestor(read_data)
+
             self.getContextHints(read_data)
 
         if doPrint:
             return self._printLines(self.hints.getAllPrintable())
         else:
-            return self.hints.getAllPrintable()
+            return self.hints
 
     def getContextHints(self, lines):
         self.loadConstants(lines)

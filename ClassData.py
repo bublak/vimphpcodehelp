@@ -7,6 +7,7 @@ class ClassData:
 
     path = None;
 
+    parentClass = {'lineNumber': None, 'name': None, 'lines': None}; 
     constants = {};
     functions = {};
 
@@ -26,22 +27,22 @@ class ClassData:
         self.constants[name] = elem
 
     def getConstantsPrintable(self):
-        result = self._basicPrinter(self.constants)
+        result = self._basicPrinterTransformer(self.constants)
 
         return result
 
     def getFunctionsPrintable(self):
-        result = self._basicPrinter(self.functions, '')
+        result = self._basicPrinterTransformer(self.functions, '')
 
         return result
 
-    def getAllPrintable(self):
-        result = self._basicPrinter(self.constants)
-        result.extend(self._basicPrinter(self.functions, ''))
+    def getAllPrintable(self, indentation=''):
+        result = self._basicPrinterTransformer(self.constants, indentation)
+        result.extend(self._basicPrinterTransformer(self.functions, indentation, ''))
 
         return result
 
-    def _basicPrinter(self, data, joinSign=' = '):
+    def _basicPrinterTransformer(self, data, indentation='', joinSign=' = '):
         #TODO cut the value for some limit length
         space = self.space
 
@@ -49,7 +50,7 @@ class ClassData:
 
         for elemKey in data.keys():
             item = data.get(elemKey)
-            result.append(item.definition + space + item.name + joinSign + item.value)
+            result.append(indentation + item.definition + space + item.name + joinSign + item.value)
 
         result.sort()
 
