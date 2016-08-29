@@ -24,6 +24,18 @@ class TestClassCodeParser(unittest.TestCase):
 
         self.assertEqual('./portal/modeman/impl/IW/ModeMan/Instance/Service.php', actualResult)
 
+    def test_getVariableDefinedInConstructor(self):
+        cch = CodeParser()
+
+        word = '_import'
+        lines = self._getLinesForVariableDefinedInConstructor()
+        lineNumber = 29 # edited against vim: -1
+        line = '        $result = $this->_import->importJobs([$jobVoDeveloper, $jobVoTester]);'
+
+        actualResult = cch.getVariable(word, lines, lineNumber)
+
+        self.assertEqual('./portal/module/impl/IX/Module/SubModule/Core/Import.php', actualResult)
+
     def test_getUseNamespacedWordExtendedFolderNamespace(self):
         cch = CodeParser()
 
@@ -36,6 +48,42 @@ class TestClassCodeParser(unittest.TestCase):
 
         self.assertEqual('./portal/cre/impl/IW/Cre/MM/Model/He/Authoron.php', actualResult)
     
+
+    def _getLinesForVariableDefinedInConstructor(self):
+        lines = [
+            '<?php',
+            '',
+            'use IX\Module\SubModule\Core\Import;',
+            '',
+            '/**',
+            ' * XXX.',
+            ' *',
+            ' * @author     XX XX <xx>',
+            ' */',
+            'class IX_ImportTest extends IX_Core_Test_AbstractTestCase',
+            '{',
+            '    /**',
+            '     * Tested class.',
+            '     *',
+            '     * @var IX\Module\SubModule\Core\Import',
+            '     */',
+            '    private $_import = null;',
+            '',
+            '    /**',
+            '     * Tests setup.',
+            '     *',
+            '     * @return void',
+            '     */',
+            '    protected function setUp() {',
+            '        $this->_import  = new Import($this->_config);',
+            '    }',
+            '',
+            '    public function testCreateJob() {',
+            '        $result = $this->_import->importJobs([$jobVoDeveloper, $jobVoTester]);',
+            '    }'
+        ]
+
+        return lines
 
     def _getLinesForExtendedFolderNamespace(self):
         lines = [

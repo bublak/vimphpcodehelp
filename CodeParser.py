@@ -1,6 +1,5 @@
 import re
 
-
 #TODO nefacha hledat Singleton:
 #namespace IW\Core;
 #
@@ -117,9 +116,15 @@ class CodeParser:
                 patternWord = word + ' *='
                 if re.search(patternWord, line):
                     foundedLine = line
-                    break
 
-        self.printd(foundedLine)
+                    self.printd('nalezena variable na radce: ' + i.__str__())
+                    self.printd(' radka: ' + line)
+                    result = self.processLineForClassDefinition(word, lines, line, i)
+
+                    if result != False:
+                        return result
+                    else:
+                        foundedLine = False
 
         if foundedLine != False:
             self.printd('nalezena variable na radce: ' + i.__str__())
