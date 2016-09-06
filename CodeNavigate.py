@@ -1,5 +1,21 @@
 from CodeParser import CodeParser
+from BasicGui import BasicGui
 from ClassContextHint import ClassContextHint
+
+from Tkinter import *
+
+#TODO nefacha hledat ValidatorType
+#if (IW_Core_Validate::isEnumValue($validatorName, 'IW\Core\ModeMan\Data\Enum\ValidatorType')) {
+
+#TODO - dvouradkovy definice
+
+
+# TODO nefacha komentar:
+#
+#v use search search authorization 48
+#$oeAdmin = IW_Core_Utils_CurrentUser::getOrganisationalUnitsAdmin();
+
+# TODO TODO TODO podporu pro private kdyz se hleda ve stejnym souboru -> To uz mi fakt sere
 
 class CodeNavigate:
 
@@ -11,15 +27,25 @@ class CodeNavigate:
 
     def getClassContextData(self, className, lines, lineNumber, actualFilePath=None):
 
+        print "PPPPPPPPPPPP:"
+        print className
+        print "lines"
+        print lines
+        print lineNumber
+        print actualFilePath
+
+
         codeParser = CodeParser()
+
+        result = False
+        showPrivate = False
 
         if className != '':
             result = codeParser.startSearching(className, lines, lineNumber)
 
-            if result != False:
-                actualFilePath = result
-            else:
-                actualFilePath = result
+        if result != False:
+            actualFilePath = result
+            showPrivate = True
 
         allHints = {}
 
@@ -78,11 +104,15 @@ class CodeNavigate:
                 actualFilePath = result
 
         if actualFilePath:
-            # TODO -> jak poznat ze naslo? -> vrati True??
-            hints = cch.getMethodHintForFile(actualFilePath, functionName, True)
+            hints = cch.getMethodHintForFile(actualFilePath, functionName, False)
 
-            if hints == True:
-                return True #TODO
+            # Detection, that the functionName was found
+            if len(hints.functions) > 0:
+                functionData = hints.functions[functionName]
+
+                self._displayText(functionName, functionData.comment, actualFilePath)
+
+                return True
 
             hasParent = False
             if hints.parentClass['lineNumber'] != None:
@@ -96,24 +126,26 @@ class CodeNavigate:
                     hints.parentClass['name'], hints.parentClass['lines'], lineNumber
                 )
 
-                printd(' new parent class: ')
+                printd(' new parent class: ', False)
 
                 # TODO proc se musi delat nahrazeni tady? -> nemelo by to vratit v poradku?
                 parentClassPath = parentClassPath.replace('\n', '')
                 parentClassPath = parentClassPath.replace(';', '')
-                printd(parentClassPath)
+                printd(parentClassPath, False)
 
                 cchParent = ClassContextHint(parentClassPath)
-                hints = cchParent.getMethodHintForFile(parentClassPath, functionName, True)
-                # todo -> tohle tu nemuze byt, protoze se to bude volat z ruznych method, tohle je omezeni na jednu
-                if hints == True:
+                hints = cchParent.getMethodHintForFile(parentClassPath, functionName, False)
+
+                # Detection, that the functionName was found
+                if len(hints.functions) > 0:
+                    functionData = hints.functions[functionName]
+
+                    self._displayText(functionName, functionData.comment, parentClassPath)
                     return True
 
                 hasParent = False
                 if hints.parentClass['lineNumber'] != None:
                     hasParent = True
-
-
 
     def _printLines(self, data, separator="\n"):
         for line in data:
@@ -122,7 +154,14 @@ class CodeNavigate:
 
                 print line
 
+    def _displayText(self, title, ttext, fileName):
+        basicGui = BasicGui(title, ttext, fileName)
+        basicGui.start()
+
+
 #def printd(string, debug=True):
 def printd(string, debug=False):
     if debug == True:
         print(string)
+
+

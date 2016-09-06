@@ -21,6 +21,12 @@ class ClassData:
 
         self.functions[name] = elem
 
+    def addCommentToFunction(self, name, comment):
+        elem = self.functions[name]
+
+        elem.comment = comment
+        self.functions[name] = elem
+
     def addConstant(self, name, value, definition, lineNumber, comment=''):
         elem = ClassElement(EnumClassData.FIELD_CONSTANT, name, value, definition, lineNumber, comment)
 

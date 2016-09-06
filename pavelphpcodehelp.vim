@@ -64,10 +64,6 @@ lineNumber          = lineNumber - 1 #correction to right line, where is cursor
 lines               = vim.current.buffer
 filename            = vim.eval("@%")
 
-print '============= '
-print 'class name: ' + classNameOfFunction
-print 'function name: ' + searchWord
-
 codeNav.getFunctionAnotation(searchWord, classNameOfFunction, lineNumber, lines, filename)
 
 endOfPython

@@ -80,8 +80,9 @@ class ClassContextHint:
             self._printLines(comment, '')
             return True
         else:
-            # TODO connect with ClassData element !!!!!!!!!!!!!!!!!!
-            return comment
+            # add comment to function in ClassData element
+            self.hints.addCommentToFunction(functionName, comment)
+            return self.hints
 
     def getContextHintsForFile(self, filename, doPrint=False):
 
