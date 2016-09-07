@@ -38,7 +38,7 @@ class ClassData:
         return result
 
     def getFunctionsPrintable(self):
-        result = self._basicPrinterTransformer(self.functions, '')
+        result = self._basicPrinterTransformer(self.functions, '', '')
 
         return result
 

@@ -134,6 +134,7 @@ class CodeParser:
         return result
 
     def processLineForClassDefinition(self, word, lines, line, lineNumber):
+        self.printd(' && process line for class definition &&')
             
         restOfLine = line.split('=', 1)[1].strip()
 
@@ -297,6 +298,12 @@ class CodeParser:
 
     def getUseNamespacedWord(self, word, lines, lineNumber, line):
         self.printd('hledam v namespace')
+
+        result = self.isWordOldClass(word, line)
+
+        if result != False:
+            self.printd('is old class def')
+            return result
 
         # try first find the extended namespace use:  ABCD\EFG\word
         hasExtendedNamespace = False

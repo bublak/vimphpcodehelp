@@ -55,14 +55,14 @@ class ClassContextHint:
         self.getAncestor(read_data)
         self.loadFunctions(read_data, functionName)
 
-        print filename
         # TODO -> check that exists
         if self.hints.functions.has_key(functionName):
             lineNumber = self.hints.functions[functionName].lineNumber + 1
         else:
             return self.hints
 
-        read_data = read_data[:lineNumber+5] # 5 -> show first 5 lines from function
+        functionPart = read_data[lineNumber:lineNumber+5] # -> first 5 lines from function
+        read_data = read_data[:lineNumber] # -> get part to function definition
 
         read_data.reverse()
 
@@ -75,6 +75,7 @@ class ClassContextHint:
                 comment.append(line);
 
         comment.reverse()
+        comment.extend(functionPart)
 
         if doPrint:
             self._printLines(comment, '')
@@ -89,7 +90,6 @@ class ClassContextHint:
         with open(filename, 'r') as f:
             read_data = f.readlines()
 
-        printd('NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN')
         if read_data:
             printd( '=============== hledam dedicnost')
             self.getAncestor(read_data)
@@ -139,13 +139,12 @@ class ClassContextHint:
 
         if functionName == False:
             searchFunctionName = '.*'
-            patternWithEnd = '(.*public.*|protected.*) function ('+searchFunctionName+') ?(.*\(.*\).*)[{;]'
+            patternWithEnd = '(.*public.*|protected.*) function ('+searchFunctionName+')\s?(.*\(.*\).*)[{;]'
             patternNotEnded = '(.*public.*|protected.*) function '+searchFunctionName+'\(.*'
         else:
-            searchFunctionName = functionName+'.*'
-            patternWithEnd = '(.*public.*|protected.*|private.*) function ('+searchFunctionName+') ?(.*\(.*\).*)[{;]'
-            patternNotEnded = '(.*public.*|protected.*|private.*) function '+searchFunctionName+'\(.*'
-
+            searchFunctionName = functionName
+            patternWithEnd = '(.*public.*|protected.*|private.*) function ('+searchFunctionName+')\s*(.*\(.*\).*)[{;]'
+            patternNotEnded = '(.*public.*|protected.*|private.*) function '+searchFunctionName+'\s*\(.*'
 
         lineToProcess = False
         lineNumber = 0

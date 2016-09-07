@@ -73,7 +73,8 @@ class TestClassContextHint(unittest.TestCase):
 
         actualResult = cch.getContextHintsForFile(filename, False)
 
-        self.assertEqual(self._expectedResultForFile(), actualResult)
+        result = actualResult.getAllPrintable()
+        self.assertEqual(self._expectedResultForFile(), result)
 
     def test_getMethodHintForFile(self):
         cch = ClassContextHint('vvv')
@@ -122,7 +123,8 @@ class TestClassContextHint(unittest.TestCase):
             'public aBc()',
             'public eDf($abc, $kva)',
             'public gHch($a, $ccc=null,    $d, $e="ble")',
-            'public iJk( $abc, $ddd=null, $d, $e="ble")'
+            'public iJk( $abc, $ddd=null, $d, $e="ble")',
+            'public iJkKva( $abc, $ddd=null, $d, $e="ble")'
         ]
 
     def _getLinesForConstants(self):
@@ -138,6 +140,7 @@ class TestClassContextHint(unittest.TestCase):
             'const B = "44fads";',
             '  public function aBc(){',
             'public function eDf($abc, $kva)', '{',
+            'public function iJkKva (', ' $abc, $ddd=null,', ' $d, $e="ble") { ', #bug for filter function: iJk
             'public function gHch ($a, $ccc=null,', '    $d, $e="ble") ', ' { ',
             'public function iJk (', ' $abc, $ddd=null,', ' $d, $e="ble") { ',
             'private function _zZz(){',

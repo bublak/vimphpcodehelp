@@ -4,16 +4,11 @@ from ClassContextHint import ClassContextHint
 
 from Tkinter import *
 
-#TODO nefacha hledat ValidatorType
+
+#TODO nefacha hledat ValidatorType     -> v modeman neco valida... :)
 #if (IW_Core_Validate::isEnumValue($validatorName, 'IW\Core\ModeMan\Data\Enum\ValidatorType')) {
 
 #TODO - dvouradkovy definice
-
-
-# TODO nefacha komentar:
-#
-#v use search search authorization 48
-#$oeAdmin = IW_Core_Utils_CurrentUser::getOrganisationalUnitsAdmin();
 
 # TODO TODO TODO podporu pro private kdyz se hleda ve stejnym souboru -> To uz mi fakt sere
 

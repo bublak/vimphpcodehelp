@@ -24,6 +24,19 @@ class TestClassCodeParser(unittest.TestCase):
 
         self.assertEqual('./portal/modeman/impl/IW/ModeMan/Instance/Service.php', actualResult)
 
+    def test_getKnownDefinitionsVariableForOldClass(self):
+        cch = CodeParser()
+
+        word = 'confReader'
+        lines = self._getLinesForOldClassInVariable()
+        lineNumber = 7 # edited against vim: -1
+
+        line = '    $this->_data = array_merge($this->_data, $confReader->toArray());'
+
+        actualResult = cch.getKnownDefinitions(word, lines, lineNumber)
+
+        self.assertEqual('./portal/core/impl/IW/Core/Config/OldPortal.php', actualResult)
+
     def test_getVariableDefinedInConstructor(self):
         cch = CodeParser()
 
@@ -103,6 +116,20 @@ class TestClassCodeParser(unittest.TestCase):
             '$modeService = Service::getInstance();',
             '$newKeys = $modeService->createTags($apime, $propPath, [$text]);'
         
+        ]
+
+        return lines
+
+    def _getLinesForOldClassInVariable(self):
+        lines = [
+            '<?php',
+            '',
+            '// \core\modeman',
+            'class ABRAKA extends Feature {',
+            '',
+            '    private function _xxxtes(xxe $ccccccce, Model $model) {',
+            '    $confReader = new IW_Core_Config_OldPortal();',
+            '    $this->_data = array_merge($this->_data, $confReader->toArray());'
         ]
 
         return lines
