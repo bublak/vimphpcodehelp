@@ -20,6 +20,13 @@ class CodeNavigate:
 
         return actualFilePath
 
+    def navigateToClassFunction(self, className, lines, lineNumber, functionName):
+        # TODO -> napsat
+        codeParser = CodeParser()
+        actualFilePath = codeParser.startSearching(className, lines, lineNumber)
+
+        return actualFilePath
+
     def getClassContextData(self, className, lines, lineNumber, actualFilePath=None):
 
         print "PPPPPPPPPPPP:"
@@ -29,10 +36,9 @@ class CodeNavigate:
         print lineNumber
         print actualFilePath
 
-
         codeParser = CodeParser()
 
-        result = False
+        result      = False
         showPrivate = False
 
         if className != '':
@@ -40,7 +46,7 @@ class CodeNavigate:
 
         if result != False:
             actualFilePath = result
-            showPrivate = True
+            showPrivate    = True
 
         allHints = {}
 
@@ -86,19 +92,22 @@ class CodeNavigate:
             self._printLines(item.getAllPrintable('     '))
             print '= '
 
+    # get function anotation comment
+    # if the functionName == className, it is use search in actualFilePath (actual file)
+    # else the className is searched
     def getFunctionAnotation(self, functionName, className, lineNumber, lines, actualFilePath=None):
         functionName = functionName.strip()
 
         cch = ClassContextHint("bb") # TODO set path properly
 
-        if functionName != '':
+        if functionName != '' and functionName != className:
             codeParser = CodeParser()
             result = codeParser.startSearching(className, lines, lineNumber)
 
             if result != False:
                 actualFilePath = result
 
-        if actualFilePath:
+        while actualFilePath:
             hints = cch.getMethodHintForFile(actualFilePath, functionName, False)
 
             # Detection, that the functionName was found
@@ -109,38 +118,23 @@ class CodeNavigate:
 
                 return True
 
-            hasParent = False
-            if hints.parentClass['lineNumber'] != None:
-                hasParent = True
+            lineNumber = hints.parentClass['lineNumber']
 
-            # TODO TOHLE JE stejny jak v jiny metode
-            while hasParent:
-                lineNumber = hints.parentClass['lineNumber']
+            if lineNumber == None:
+                return False
+            else:
+                # get the parent class
+                print 'iterace: '
+                print lineNumber
+                print hints.parentClass['name']
+                print hints.parentClass['lines']
 
-                parentClassPath = codeParser.startSearching(
+                actualFilePath = codeParser.startSearching(
                     hints.parentClass['name'], hints.parentClass['lines'], lineNumber
                 )
 
-                printd(' new parent class: ', False)
-
-                # TODO proc se musi delat nahrazeni tady? -> nemelo by to vratit v poradku?
-                parentClassPath = parentClassPath.replace('\n', '')
-                parentClassPath = parentClassPath.replace(';', '')
-                printd(parentClassPath, False)
-
-                cchParent = ClassContextHint(parentClassPath)
-                hints = cchParent.getMethodHintForFile(parentClassPath, functionName, False)
-
-                # Detection, that the functionName was found
-                if len(hints.functions) > 0:
-                    functionData = hints.functions[functionName]
-
-                    self._displayText(functionName, functionData.comment, parentClassPath)
-                    return True
-
-                hasParent = False
-                if hints.parentClass['lineNumber'] != None:
-                    hasParent = True
+                printd(' new parent class: ')
+                printd(actualFilePath)
 
     def _printLines(self, data, separator="\n"):
         for line in data:
@@ -152,7 +146,6 @@ class CodeNavigate:
     def _displayText(self, title, ttext, fileName):
         basicGui = BasicGui(title, ttext, fileName)
         basicGui.start()
-
 
 #def printd(string, debug=True):
 def printd(string, debug=False):

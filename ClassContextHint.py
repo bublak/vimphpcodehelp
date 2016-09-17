@@ -34,7 +34,6 @@ class ClassContextHint:
                 newClass = res.groups()[0].strip()
 
                 newClass = newClass.replace('\n', '')
-
                 printd(newClass)
 
                 # TODO only one is supported
@@ -55,7 +54,6 @@ class ClassContextHint:
         self.getAncestor(read_data)
         self.loadFunctions(read_data, functionName)
 
-        # TODO -> check that exists
         if self.hints.functions.has_key(functionName):
             lineNumber = self.hints.functions[functionName].lineNumber + 1
         else:

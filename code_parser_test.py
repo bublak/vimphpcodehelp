@@ -4,6 +4,27 @@ from CodeParser import CodeParser
 
 class TestClassCodeParser(unittest.TestCase):
 
+    def test_startSearchingForExtendedClassWordEndedBrace(self):
+        cch   = CodeParser()
+        lines = self._getLinesForExtendedFolderNamespace()
+
+        word       = 'Feature'
+        lineNumber = 7
+
+        actualResult = cch.startSearching(word, lines, lineNumber)
+
+        self.assertEqual('./portal/cre/impl/IW/Cre/MM/Model/Enum/Feature.php', actualResult)
+
+    def test_startSearchingForExtendedClassWordWithoutBrace(self):
+        cch   = CodeParser()
+        lines = self._getLinesForExtendedClassNameWord()
+
+        word       = 'Feature'
+        lineNumber = 7
+
+        actualResult = cch.startSearching(word, lines, lineNumber)
+
+        self.assertEqual('./portal/user/impl/IW/User/Visibility/Feature.php', actualResult)
 
     def test_getFilenameForOldClass(self):
         cch = CodeParser()
@@ -61,7 +82,6 @@ class TestClassCodeParser(unittest.TestCase):
 
         self.assertEqual('./portal/cre/impl/IW/Cre/MM/Model/He/Authoron.php', actualResult)
     
-
     def _getLinesForVariableDefinedInConstructor(self):
         lines = [
             '<?php',
@@ -130,6 +150,22 @@ class TestClassCodeParser(unittest.TestCase):
             '    private function _xxxtes(xxe $ccccccce, Model $model) {',
             '    $confReader = new IW_Core_Config_OldPortal();',
             '    $this->_data = array_merge($this->_data, $confReader->toArray());'
+        ]
+
+        return lines
+
+    def _getLinesForExtendedClassNameWord(self):
+        lines = [
+            '<?php',
+            'namespace IW\User\Visibility;',
+            '',
+            '// \core\modeman',
+            'use IW\ModeMan\Instance\Service;',
+            'use IW\Cre\MM\Model;',
+            'use IW\Cre\MM\ModelManager;',
+            'class LookbookAdmin extends Feature ',
+            '{',
+            '',
         ]
 
         return lines

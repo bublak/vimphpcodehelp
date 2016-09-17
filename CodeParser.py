@@ -1,5 +1,8 @@
 import re
 
+#TODO nefacha:
+#class Buffer extends Adapter\Memory   -> hledat Memory
+
 #TODO nefacha hledat Singleton:
 #namespace IW\Core;
 #
@@ -39,22 +42,6 @@ class CodeParser:
 
         return line
 
-    # return true, if word is followed by '=' like this:  xxx = something .. word 
-    def hasEqualSignBeforeWord(self, line, word):
-        equalSingIndex = line.find('=');
-        
-        if equalSingIndex > -1:
-            equalSingIndexB = line.find('=', equalSingIndex + 1, equalSingIndex + 2); # get second '=', to check 'if statement' '=='
-
-            if equalSingIndexB < 0:
-                wordIndex = line.find(word);
-
-                if wordIndex > equalSingIndex:
-                    return True
-
-
-        return False
-
     def startSearching(self, word, lines, lineNumber):
 
         line = lines[lineNumber]
@@ -64,18 +51,14 @@ class CodeParser:
         if result != False:
             self.printd('is old class def')
             return result
-
-        result = self.getKnownDefinitions(word, lines, lineNumber)
-
-        #if hasEqualSignBeforeWord(lines[lineNumber], searchWord):
-        #searchWordWithEqualSign(lines, searchWord, lineNumber)
-        #else:
-        #searchWordWithoutEqualSign(lines, searchWord, lineNumber)
+        else: 
+            result = self.getKnownDefinitions(word, lines, lineNumber)
 
         return result
 
     def isWordOldClass(self, word, line):
         pattern = '_.*_'
+
         if re.search(pattern, word):
             return self.getFilenameForOldClass(word)
 
@@ -353,6 +336,8 @@ class CodeParser:
 
                 if namespaceDefPosition > -1:
                     namespaceDefLine = lines[i][namespaceDefPosition+len(namespaceDefPattern):]
+
+                    namespaceDefLine = namespaceDefLine.replace('\n', '')
                     namespaceDefLine = namespaceDefLine.replace(';', '\\'+word)
                     namespaceDefLine += ';'
 
@@ -380,9 +365,9 @@ class CodeParser:
                     resultPart = self.getUseNamespacedWord(part, lines, i, '')
 
                     beforePart = beforePart.replace('\\', '/') #change path separators
-
                     newResult = resultPart[:resultPart.find('.php')]
                     newResult = newResult + beforePart + '.php'
+
                     return newResult
                 else:
                     #open in current directory

@@ -10,9 +10,31 @@ class TestClassContextHint(unittest.TestCase):
         lines = self._getLinesForAncestor()
         result = cch.getAncestor(lines)
 
+        self.assertEquals(0, len(cch.hints.functions))
+        self.assertEquals(3, cch.hints.parentClass['lineNumber'])
+        self.assertEquals('Def', cch.hints.parentClass['name'])
 
-        #TODO controler class User_UserController extends IW_User_Core_Controller
+        expectedLines = [
+            'namespace afaef\faeggg\affe;',
+            '',
+            'use tada\ble\Def;'
+            '',
+            'class Abc extends Def',
+            '{',
+            ''
+        ]
 
+        self.assertEquals(expectedLines, cch.hints.parentClass['lines'])
+
+        self.assertFalse(result)
+
+    def test_getAncestorNoAncestor(self):
+        cch = ClassContextHint('cava')
+
+        lines = self._getLinesExample()
+        result = cch.getAncestor(lines)
+
+        self.assertFalse(result)
 
     def test_loadConstants(self):
         cch = ClassContextHint('test/path/')
@@ -88,6 +110,7 @@ class TestClassContextHint(unittest.TestCase):
         #print actualResult
         #self.assertEqual(self._expectedResultForFile(), actualResult)
 
+
     def _expectedResultForFile(self):
         return [
             "const ABC = 'abc'",
@@ -149,6 +172,22 @@ class TestClassContextHint(unittest.TestCase):
 
         return a
 
+    def _getLinesExample(self):
+        a = [
+            'namespace afaef\faeggg\affe;',
+            '',
+            'use tada\ble\Def;'
+            '',
+            'class Abc',
+            '{',
+            '',
+            '',
+            '',
+            ''
+        ] 
+
+        return a
+
     def _getLinesForAncestor(self):
         a = [
             'namespace afaef\faeggg\affe;',
@@ -158,9 +197,9 @@ class TestClassContextHint(unittest.TestCase):
             'class Abc extends Def',
             '{',
             '',
-            '',
-            '',
-            ''
+            'a',
+            'b',
+            'c'
         ] 
 
         return a
