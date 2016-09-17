@@ -68,3 +68,28 @@ codeNav.getFunctionAnotation(searchWord, classNameOfFunction, lineNumber, lines,
 
 endOfPython
 endfunction
+
+function! PavelGetFunctionJump(sCls, lineNumber, className)
+python << endOfPython
+
+from CodeNavigate import CodeNavigate
+
+codeNav = CodeNavigate()
+
+classNameOfFunction = vim.eval("a:className")
+searchWord          = vim.eval("a:sCls")
+lineNumber          = int(vim.eval("a:lineNumber"))
+lineNumber          = lineNumber - 1 #correction to right line, where is cursor
+lines               = vim.current.buffer
+filename            = vim.eval("@%")
+
+filename = codeNav.getFunctionAnotation(searchWord, classNameOfFunction, lineNumber, lines, filename, True)
+
+if filename != False:
+    #print filename
+    vim.command('e ' + filename)
+else:
+    print filename
+
+endOfPython
+endfunction

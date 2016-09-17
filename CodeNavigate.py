@@ -10,8 +10,6 @@ from Tkinter import *
 
 #TODO - dvouradkovy definice
 
-# TODO TODO TODO podporu pro private kdyz se hleda ve stejnym souboru -> To uz mi fakt sere
-
 class CodeNavigate:
 
     def navigateToClass(self, className, lines, lineNumber):
@@ -38,15 +36,13 @@ class CodeNavigate:
 
         codeParser = CodeParser()
 
-        result      = False
-        showPrivate = False
+        result = False
 
         if className != '':
             result = codeParser.startSearching(className, lines, lineNumber)
 
         if result != False:
             actualFilePath = result
-            showPrivate    = True
 
         allHints = {}
 
@@ -57,7 +53,6 @@ class CodeNavigate:
 
             allHints[actualFilePath] = hints
 
-            #TODO -> how do  do - while 
             hasParent = False
             if hints.parentClass['lineNumber'] != None:
                 hasParent = True
@@ -70,10 +65,6 @@ class CodeNavigate:
                 )
 
                 printd(' new parent class: ')
-
-                # TODO proc se musi delat nahrazeni tady? -> nemelo by to vratit v poradku?
-                parentClassPath = parentClassPath.replace('\n', '')
-                parentClassPath = parentClassPath.replace(';', '')
                 printd(parentClassPath)
 
                 cchParent = ClassContextHint(parentClassPath)
@@ -95,7 +86,8 @@ class CodeNavigate:
     # get function anotation comment
     # if the functionName == className, it is use search in actualFilePath (actual file)
     # else the className is searched
-    def getFunctionAnotation(self, functionName, className, lineNumber, lines, actualFilePath=None):
+    # TODO implement support for search in private methods
+    def getFunctionAnotation(self, functionName, className, lineNumber, lines, actualFilePath=None, jump=False):
         functionName = functionName.strip()
 
         cch = ClassContextHint("bb") # TODO set path properly
@@ -114,6 +106,10 @@ class CodeNavigate:
             if len(hints.functions) > 0:
                 functionData = hints.functions[functionName]
 
+                if jump == True:
+                    lineNumber = functionData.lineNumber + 1 #correction for vim
+                    return '+' + lineNumber.__str__() + ' ' + actualFilePath 
+
                 self._displayText(functionName, functionData.comment, actualFilePath)
 
                 return True
@@ -124,11 +120,6 @@ class CodeNavigate:
                 return False
             else:
                 # get the parent class
-                print 'iterace: '
-                print lineNumber
-                print hints.parentClass['name']
-                print hints.parentClass['lines']
-
                 actualFilePath = codeParser.startSearching(
                     hints.parentClass['name'], hints.parentClass['lines'], lineNumber
                 )
