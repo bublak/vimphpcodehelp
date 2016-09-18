@@ -42,8 +42,13 @@ class ClassData:
 
         return result
 
-    def getAllPrintable(self, indentation=''):
+    # blockSeparator -> how separate the constants and functions, False for none
+    def getAllPrintable(self, indentation='', blockSeparator='\n'):
         result = self._basicPrinterTransformer(self.constants, indentation)
+
+        if blockSeparator !== False:
+            result.extend(blockSeparator)
+
         result.extend(self._basicPrinterTransformer(self.functions, indentation, ''))
 
         return result

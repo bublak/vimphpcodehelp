@@ -2,8 +2,7 @@ from CodeParser import CodeParser
 from BasicGui import BasicGui
 from ClassContextHint import ClassContextHint
 
-from Tkinter import *
-
+# TODO -> inject Renderer class
 
 #TODO nefacha hledat ValidatorType     -> v modeman neco valida... :)
 #if (IW_Core_Validate::isEnumValue($validatorName, 'IW\Core\ModeMan\Data\Enum\ValidatorType')) {
@@ -19,14 +18,11 @@ class CodeNavigate:
         return actualFilePath
 
     def navigateToClassFunction(self, className, lines, lineNumber, functionName):
-        # TODO -> napsat
-        codeParser = CodeParser()
-        actualFilePath = codeParser.startSearching(className, lines, lineNumber)
+        # TODO -> napsat, ted je zneuzita fce getFunctionAnotation s parametrem jump
 
-        return actualFilePath
+        return 'not implemented'
 
     def getClassContextData(self, className, lines, lineNumber, actualFilePath=None):
-
         print "PPPPPPPPPPPP:"
         print className
         print "lines"
@@ -36,52 +32,41 @@ class CodeNavigate:
 
         codeParser = CodeParser()
 
-        result = False
-
         if className != '':
             result = codeParser.startSearching(className, lines, lineNumber)
 
-        if result != False:
-            actualFilePath = result
+            if result != False:
+                actualFilePath = result
 
-        allHints = {}
+        allHints = {} # also with parent class data
 
-        if actualFilePath:
-            cch = ClassContextHint(actualFilePath)
-
+        while actualFilePath:
+            cch   = ClassContextHint(actualFilePath)
             hints = cch.getContextHintsForFile(actualFilePath)
 
             allHints[actualFilePath] = hints
 
-            hasParent = False
-            if hints.parentClass['lineNumber'] != None:
-                hasParent = True
+            lineNumber = hints.parentClass['lineNumber']
 
-            while hasParent:
-                lineNumber = hints.parentClass['lineNumber']
-
-                parentClassPath = codeParser.startSearching(
+            if lineNumber == None:
+                actualFilePath = False
+            else:
+                # get the parent class
+                actualFilePath = codeParser.startSearching(
                     hints.parentClass['name'], hints.parentClass['lines'], lineNumber
                 )
 
                 printd(' new parent class: ')
-                printd(parentClassPath)
+                printd(actualFilePath)
 
-                cchParent = ClassContextHint(parentClassPath)
-                # todo -> tohle tu nemuze byt, protoze se to bude volat z ruznych method, tohle je omezeni na jednu
-                hints = cchParent.getContextHintsForFile(parentClassPath)
-
-                allHints[hints.path] = hints
-
-                hasParent = False
-                if hints.parentClass['lineNumber'] != None:
-                    hasParent = True
-
+        text = [] 
         for hh in allHints:
-            print hh + ': '
+            text.append('= = = = = = = = = =')
+            text.append(hh + ': \n')
             item = allHints.get(hh)
-            self._printLines(item.getAllPrintable('     '))
-            print '= '
+            text.append('\n'.join(item.getAllPrintable('     ')))
+
+        self._displayText(className, '\n'.join(text), actualFilePath)
 
     # get function anotation comment
     # if the functionName == className, it is use search in actualFilePath (actual file)
@@ -108,6 +93,7 @@ class CodeNavigate:
 
                 if jump == True:
                     lineNumber = functionData.lineNumber + 1 #correction for vim
+                    #vim command to open file on line   :e +50 filename
                     return '+' + lineNumber.__str__() + ' ' + actualFilePath 
 
                 self._displayText(functionName, functionData.comment, actualFilePath)
@@ -126,13 +112,6 @@ class CodeNavigate:
 
                 printd(' new parent class: ')
                 printd(actualFilePath)
-
-    def _printLines(self, data, separator="\n"):
-        for line in data:
-            if line != None:
-                line += separator
-
-                print line
 
     def _displayText(self, title, ttext, fileName):
         basicGui = BasicGui(title, ttext, fileName)
