@@ -20,23 +20,17 @@ class BasicGui(threading.Thread):
         self.window.title(self.title)
         self.window.geometry('700x400')
 
-        lblClassName = Label(self.window, text=self.fileName, anchor=W, justify=LEFT, pady=20)
+        lblClassName = Label(self.window, text=self.fileName, anchor=NW, justify=LEFT, pady=20)
         lblClassName.pack()
 
         #w = Text(self.window, anchor=W, justify=LEFT)
-        #w.insert(1.0, ''.join(self.ttext))
-        #w.pack()
 
-        #w.configure(state="disabled")
+        txtFunctionAnotation = Text(self.window)
+        txtFunctionAnotation.insert(END, ''.join(self.ttext))
+        txtFunctionAnotation.pack()
 
-        # if tkinter is 8.5 or above you'll want the selection background
-        # to appear like it does when the widget is activated
-        # comment this out for older versions of Tkinter
-
-        #w.configure(inactiveselectbackground=w.cget("selectbackground"))
-
-        lblFunctionAnotation = Label(self.window, text=''.join(self.ttext), anchor=W, justify=LEFT)
-        lblFunctionAnotation.pack()
+        #lblFunctionAnotation = Label(self.window, text=''.join(self.ttext), anchor=NW, justify=LEFT)
+        #lblFunctionAnotation.pack()
         btn = Button(self.window, text='Exit ', command=self.closeWindow)
         btn.pack(expand=NO)
 

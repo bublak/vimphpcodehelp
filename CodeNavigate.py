@@ -23,13 +23,6 @@ class CodeNavigate:
         return 'not implemented'
 
     def getClassContextData(self, className, lines, lineNumber, actualFilePath=None):
-        print "PPPPPPPPPPPP:"
-        print className
-        print "lines"
-        print lines
-        print lineNumber
-        print actualFilePath
-
         codeParser = CodeParser()
 
         if className != '':
@@ -37,6 +30,8 @@ class CodeNavigate:
 
             if result != False:
                 actualFilePath = result
+
+        actualFilePathOrig = actualFilePath
 
         allHints = {} # also with parent class data
 
@@ -61,12 +56,12 @@ class CodeNavigate:
 
         text = [] 
         for hh in allHints:
-            text.append('= = = = = = = = = =')
+            text.append('\n= = = = = = = = = =\n')
             text.append(hh + ': \n')
             item = allHints.get(hh)
-            text.append('\n'.join(item.getAllPrintable('     ')))
+            text.extend(item.getAllPrintable('\n      '))
 
-        self._displayText(className, '\n'.join(text), actualFilePath)
+        self._displayText(actualFilePathOrig, text, actualFilePathOrig)
 
     # get function anotation comment
     # if the functionName == className, it is use search in actualFilePath (actual file)

@@ -46,7 +46,7 @@ class ClassData:
     def getAllPrintable(self, indentation='', blockSeparator='\n'):
         result = self._basicPrinterTransformer(self.constants, indentation)
 
-        if blockSeparator !== False:
+        if blockSeparator != False:
             result.extend(blockSeparator)
 
         result.extend(self._basicPrinterTransformer(self.functions, indentation, ''))
