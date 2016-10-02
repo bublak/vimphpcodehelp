@@ -50,6 +50,18 @@ class TestClassCodeParser(unittest.TestCase):
 
         self.assertEqual('./portal/user/impl/IW/User/Visibility/Feature.php', actualResult)
 
+    def test_startSearchingForExtendedClassWordOfPartPathNamespace(self):
+        cch   = CodeParser()
+        lines = self._getLinesForExtendedClassWordOfPartPathNamespace()
+
+        word       = 'Mmy'
+        lineNumber = 13
+
+        actualResult = cch.startSearching(word, lines, lineNumber)
+
+        self.assertEqual('./portal/cre/impl/IW/Cre/Cche/Addp/Mmy.php', actualResult)
+
+
     def test_getFilenameForOldClass(self):
         cch = CodeParser()
 
@@ -215,6 +227,30 @@ class TestClassCodeParser(unittest.TestCase):
         ]
 
         return lines
+
+    def _getLinesForExtendedClassWordOfPartPathNamespace(self):
+        lines = [
+            '<?php',
+            'namespace IW\Cre;',
+            'use IW\Cre\Cche\Addp;',
+            '',
+            '/**',
+            '* Some text',
+            '* Some text',
+            '*',
+            '* @author     Some author <author@email.cz>',
+            '* @version    SVN: $Id: Bff.php 145409 1951-09-20 11:02:30Z cc.ccc $',
+            '* @category   Cre',
+            '* @package    Bff',
+            '*/',
+            'class Bff extends Addp\Mmy',
+            '{'
+        ]
+
+        return lines
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -316,7 +316,9 @@ class CodeParser:
             self.printd('found extended FFFF namespace ' + word)
             word = res.groups()[0]
             self.printd('found extended namespace ' + word)
-            
+            subPath = word.split('\\')
+            self.printd('found subpath for namespace ' + subPath[0])
+
         result = False
         i = 0
         namespaceDefLine = False
@@ -345,6 +347,17 @@ class CodeParser:
 
             line = lines[i]
 
+            if hasExtendedNamespace and len(line) > 1:
+                # TODO not work with alias, NO test for alias
+                subLine = line[:-1] # get rid off ';' at the end of line
+                if line[:-1].endswith(subPath[0]):
+                    self.printd('hledam castecnou cestu v namespace')
+                    subPath.pop(0) # get rid off the path part, which is in namespace definition.
+                    wholePath = subLine + '\\' + '\\'.join(subPath)
+
+                    result = self._getNamespacedClass(wholePath+';');
+                    break;
+
             if namespaceDefLine == False:
                 namespaceDefPosition = lines[i].find(namespaceDefPattern)
 
@@ -357,11 +370,6 @@ class CodeParser:
 
                     self.printd('namespace current directory:')
                     self.printd(namespaceDefLine)
-
-                    if hasExtendedNamespace == True:
-                        self.printd('lezu do namespaced class pro extended namespace')
-                        result = self._getNamespacedClass(namespaceDefLine);
-                        break;
 
             if line.find("{") > -1: # namespace definitions ends with class {
                 self.printd(''),
@@ -404,6 +412,10 @@ class CodeParser:
                         result = self._getNamespacedClass(line)
 
                     break
+
+        if result == False and hasExtendedNamespace == True:
+            self.printd('lezu do namespaced class pro extended namespace')
+            result = self._getNamespacedClass(namespaceDefLine);
 
         self.printd('nasel jsem: ' + result)
         return result
