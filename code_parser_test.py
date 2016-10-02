@@ -1,8 +1,32 @@
 import unittest
 
+# example for run one text:
+#python code_parser_test.py TestClassCodeParser.test_startSearchingForNamespacedClassWithUnderscore
 from CodeParser import CodeParser
 
 class TestClassCodeParser(unittest.TestCase):
+
+    def test_startSearchingForNamespacedClassWithUnderscore(self):
+        cch   = CodeParser()
+        lines = self._getLinesForNamespacedClassWithAliasWithUnderscore()
+
+        word       = 'Cche_Srvce'
+        lineNumber = 7
+
+        actualResult = cch.startSearching(word, lines, lineNumber)
+
+        self.assertEqual('./portal/cre/impl/IW/Cre/Cnxt/Fcl/Cl.php', actualResult)
+
+    def test_startSearchingForVariableOfNamespacedClassWithUnderscore(self):
+        cch   = CodeParser()
+        lines = self._getLinesForNamespacedClassWithAliasWithUnderscore()
+
+        word       = 'abcde'
+        lineNumber = 8
+
+        actualResult = cch.startSearching(word, lines, lineNumber)
+
+        self.assertEqual('./portal/cre/impl/IW/Cre/Cnxt/Fcl/Cl.php', actualResult)
 
     def test_startSearchingForExtendedClassWordEndedBrace(self):
         cch   = CodeParser()
@@ -32,6 +56,13 @@ class TestClassCodeParser(unittest.TestCase):
         actualResult = cch.getFilenameForOldClass('IW_User_ClickAndPrint_ClickAndPrintVo')
 
         self.assertEqual('./portal/user/impl/IW/User/ClickAndPrint/ClickAndPrintVo.php', actualResult)
+
+    def test_getFilenameForOldClassFalseDefinition(self):
+        cch = CodeParser()
+
+        actualResult = cch.getFilenameForOldClass('User_ClickAndPrint_ClickAndPrintVo')
+
+        self.assertFalse(actualResult)
 
     def test_getVariable(self):
         cch = CodeParser()
@@ -136,6 +167,21 @@ class TestClassCodeParser(unittest.TestCase):
             '$modeService = Service::getInstance();',
             '$newKeys = $modeService->createTags($apime, $propPath, [$text]);'
         
+        ]
+
+        return lines
+
+    def _getLinesForNamespacedClassWithAliasWithUnderscore(self):
+        lines = [
+            '<?php',
+            'namespace IW\Core\Cache;',
+            'use IW\Cre\Cnxt\Fcl\Cl as Cche_Srvce;',
+            'class ABRAKA extends Feature {',
+            '',
+            '    private function _xxxtes(xxe $ccccccce, Model $model) {',
+            '// some comment',
+            '$abcde = IW_Core_BeanFactory::singleton(Cche_Srvce::class);',
+            '$data   = $abcde->getData($links);'
         ]
 
         return lines

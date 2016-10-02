@@ -42,11 +42,22 @@ class CodeParser:
 
         return line
 
+    # method for searching path for known class word
+    # first search for old class, if not found, try to get namespaced class
+    def getFilenameForClassWord(self, word, lines, lineNumber, line):
+        self.printd('Hledam filename for class word: ' + word)
+        oldFilename = self.getFilenameForOldClass(word)
+
+        if oldFilename != False:
+            return oldFilename
+        else:
+            return self.getUseNamespacedWord(word, lines, lineNumber, line)
+
     def startSearching(self, word, lines, lineNumber):
 
         line = lines[lineNumber]
 
-        result = self.isWordOldClass(word, line)
+        result = self.getFilenameForOldClass(word)
 
         if result != False:
             self.printd('is old class def')
@@ -55,14 +66,6 @@ class CodeParser:
             result = self.getKnownDefinitions(word, lines, lineNumber)
 
         return result
-
-    def isWordOldClass(self, word, line):
-        pattern = '_.*_'
-
-        if re.search(pattern, word):
-            return self.getFilenameForOldClass(word)
-
-        return False
 
     # search backwards from lineNumber, until the search word or word 'function' is find, if no definition and function found,
     # search from begin of file
@@ -139,7 +142,10 @@ class CodeParser:
         if res:
             newWord = res.groups()[0]
             self.printd('hledane nove slovo: ' + newWord)
-            return self.getFilenameForOldClass(newWord)
+            oldFilename = self.getFilenameForOldClass(newWord)
+
+            if oldFilename != False:
+                return oldFilename
 
         pattern = 'IW_Core_BeanFactory::singleton\(' + '(.*)::class' + '\)';
         self.printd('pattern: ' + pattern)
@@ -147,7 +153,8 @@ class CodeParser:
         if res:
             newWord = res.groups()[0]
             self.printd('hledane nove slovo: ' + newWord)
-            return self.getFilenameForOldClass(newWord)
+
+            return self.getFilenameForClassWord(newWord, lines, lineNumber, line)
 
         pattern = 'new (.*?)\('; # the ? cause not greedy behaviour
 
@@ -202,7 +209,11 @@ class CodeParser:
         self.printd(pattern);
         if re.search(pattern, line):
             self.printd('found beanfactory singleton')
-            return self.getFilenameForOldClass(word)
+
+            oldFilename = self.getFilenameForOldClass(word)
+
+            if oldFilename != False:
+                return oldFilename
 
         #new Word()
         # ->valid(new VoValidator(), $listViewVo, 'listViewVo')
@@ -214,7 +225,7 @@ class CodeParser:
             self.printd('found new word')
             return self.getUseNamespacedWord(word, lines, lineNumber, line)
 
-        # NOT this -> IW_Core_Validate::getInstance() -> this is catched before with  isWordOldClass(word, line)
+        # NOT this -> IW_Core_Validate::getInstance() -> this is catched before with  getFilenameForOldClass(word)
         # but this-> Service::getInstance()
         pattern = word + '::getInstance\('; #pridat bily znaky pred zavorku, a aby nebyl zravej
 
@@ -265,6 +276,11 @@ class CodeParser:
         #return False
 
     def getFilenameForOldClass(self, word):
+        pattern = 'IW_\w+'
+
+        if re.search(pattern, word) == None:
+            return False;
+
         module = word[3:len(word)]
         rest = module[module.find('_')+1:]
         rest = rest + '.php'
@@ -282,7 +298,7 @@ class CodeParser:
     def getUseNamespacedWord(self, word, lines, lineNumber, line):
         self.printd('hledam v namespace')
 
-        result = self.isWordOldClass(word, line)
+        result = self.getFilenameForOldClass(word)
 
         if result != False:
             self.printd('is old class def')
@@ -393,7 +409,7 @@ class CodeParser:
 
         self.printd('nasel jsem: ' + result)
         return result
-    
+
     #def printd(self, string, debug=True):
     def printd(self, string, debug=False):
         if debug == True:
