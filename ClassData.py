@@ -47,22 +47,32 @@ class ClassData:
         result = self._basicPrinterTransformer(self.constants, indentation)
 
         if blockSeparator != False:
-            result.extend(blockSeparator)
+            result.append(blockSeparator)
 
         result.extend(self._basicPrinterTransformer(self.functions, indentation, ''))
 
         return result
 
     def _basicPrinterTransformer(self, data, indentation='', joinSign=' = '):
-        #TODO cut the value for some limit length
         space = self.space
 
         result = []
 
         for elemKey in data.keys():
             item = data.get(elemKey)
-            result.append(indentation + item.definition + space + item.name + joinSign + item.value)
+
+            itemName = self._truncateLongString(item.name)
+            itemValue = self._truncateLongString(item.value)
+
+            result.append(indentation + item.definition + space + itemName + joinSign + itemValue)
 
         result.sort()
 
         return result
+
+    # cut the value for some limit length (77) and add three dots at the end in that case
+    def _truncateLongString(self, value, joinSign='...'):
+        newValue = (value[:77] + '...') if len(value) > 77 else value
+
+        return newValue
+

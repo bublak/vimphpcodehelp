@@ -7,6 +7,8 @@ class Mputree extends Broumov {
     const ABC = 'abc';
     const EDF = 'abc';
 
+    const EDFG = 'abc_some long text which can break layout or something :) abcdefghijklmnopqrstuvwxyz';
+
     public static $DEFAULT_COUNT = 20;
 
     private $_nodes = array();

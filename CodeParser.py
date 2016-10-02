@@ -164,7 +164,7 @@ class CodeParser:
             newWord = res.groups()[0]
             self.printd('hledane nove slovo: ' + newWord)
             return self.getUseNamespacedWord(newWord, lines, lineNumber, line)
-            
+
         pattern = '(.*?)::create'; # the ? cause not greedy behaviour
 
         self.printd('pattern: ' + pattern)
@@ -175,10 +175,8 @@ class CodeParser:
             return self.getUseNamespacedWord(newWord, lines, lineNumber, line)
 
         #TODO implement all other types :)
-        # x) tohle nejde: (protoze otevre ba, misto hledanyho aaa: $aaa  = $ba->getAAAById($aaId);
         # x) tohle nevim jestli ma cenu: function definition, like:   $neco = $this->getDef();
         return False
-        
 
     def getKnownDefinitions(self, word, lines, lineNumber):
         self.printd('vstupuju getKnownDefinitions')

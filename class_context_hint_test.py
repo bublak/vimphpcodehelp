@@ -83,6 +83,7 @@ class TestClassContextHint(unittest.TestCase):
 
         expectedResult = []
         expectedResult.extend(self._expectedResultConstants())
+        expectedResult.extend('\n')
         expectedResult.extend(self._expectedResultFunctions())
 
         self.assertEqual(expectedResult, actualResult)
@@ -95,7 +96,7 @@ class TestClassContextHint(unittest.TestCase):
 
         actualResult = cch.getContextHintsForFile(filename, False)
 
-        result = actualResult.getAllPrintable()
+        result = actualResult.getAllPrintable('', '-block-separator--')
         self.assertEqual(self._expectedResultForFile(), result)
 
     def test_getMethodHintForFile(self):
@@ -115,6 +116,8 @@ class TestClassContextHint(unittest.TestCase):
         return [
             "const ABC = 'abc'",
             "const EDF = 'abc'",
+            "const EDFG = 'abc_some long text which can break layout or something :) abcdefghijklmnopqr...",
+            '-block-separator--',
             'abstract public renderHeaderb(array $preparedHeader)',
             'protected abstract getConfigData()',
             'protected createDOMDocument()',

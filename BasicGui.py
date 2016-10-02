@@ -18,7 +18,7 @@ class BasicGui(threading.Thread):
     def run(self):
         self.window = Tk()
         self.window.title(self.title)
-        self.window.geometry('700x400')
+        self.window.geometry('800x500')
 
         lblClassName = Label(self.window, text=self.fileName, anchor=NW, justify=LEFT, pady=20)
         lblClassName.pack()
@@ -27,7 +27,7 @@ class BasicGui(threading.Thread):
 
         txtFunctionAnotation = Text(self.window)
         txtFunctionAnotation.insert(END, ''.join(self.ttext))
-        txtFunctionAnotation.pack()
+        txtFunctionAnotation.pack(expand=True, fill='both')
 
         #lblFunctionAnotation = Label(self.window, text=''.join(self.ttext), anchor=NW, justify=LEFT)
         #lblFunctionAnotation.pack()
