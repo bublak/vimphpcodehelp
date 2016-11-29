@@ -17,7 +17,7 @@ class CodeParser:
 
     # NOTE: last char of line is deleted by processing line, so there should be for example ';'
     def _getNamespacedClass(self, line):
-        self.printd('vstupuju getnamespaced class with line:');
+        self.printd('vstupuju do getnamespaced class with line:');
         self.printd(line);
         #note: if there is not ' as ' -> the -1 value is returned, which caused cutting the ; at the end of line!!!
         line = line[:line.find(' as ')] 
@@ -31,9 +31,14 @@ class CodeParser:
         else:
             line = line.replace('\\', '/') #change path separators
 
+            if (line.startswith('/', 0, 1)):
+                line = line[1:len(line)]
+
             module = line[3:len(line)]
             module = module[:module.find('/')]
             module = module.lower()
+
+            line = line.replace(';', '')
 
             line = './portal/' + module + '/impl/' + line + '.php'
 
@@ -179,10 +184,10 @@ class CodeParser:
         return False
 
     def getKnownDefinitions(self, word, lines, lineNumber):
-        self.printd('vstupuju getKnownDefinitions')
+        self.printd('vstupuju do getKnownDefinitions')
 
         line = lines[lineNumber]
-        self.printd('hledane slovo: ' + word + '; A radka: ')
+        self.printd('hledane slovo: ' + word + '   A radka: ')
         self.printd(line)
 
         quotes = '[\'|"]'
