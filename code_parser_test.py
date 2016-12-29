@@ -59,7 +59,7 @@ class TestClassCodeParser(unittest.TestCase):
         lineNumber = 7
 
         actualResult = cch.startSearching(word, lines, lineNumber)
-        self.assertEqual('./portal/cre/impl/IW/MM/Model/Feature.php', actualResult)
+        self.assertEqual('./portal/cre/impl/IW/Cre/MM/Model/Feature.php', actualResult)
 
     def test_startSearchingForExtendedClassWordOfPartPathNamespace(self):
         cch   = CodeParser()
