@@ -27,5 +27,9 @@ class LookbookAdmin extends AbstractVisibility
      * @return array ble
      */
     protected function kvakva(array $params) {
+        $urlHelper = new IW_Cre_Views_Helper_CreUrl();
+        $b = $urlHelper->testA();
+
+        return $b;
     }
 }

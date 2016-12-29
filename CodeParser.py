@@ -1,4 +1,5 @@
 import re
+import os.path
 
 #TODO nefacha:
 #class Buffer extends Adapter\Memory   -> hledat Memory
@@ -286,12 +287,37 @@ class CodeParser:
 
         module = word[3:len(word)]
         rest = module[module.find('_')+1:]
-        rest = rest + '.php'
-        rest = rest.replace('_', '/')
 
-        module = module[:module.find('_')]
+        if rest.startswith('Views_'):
+            # branch for portal Zend view helpers
+            rest = rest[6:] # get rid of Views_
 
-        return './portal/' + module.lower() + '/impl/IW/' + module + '/' + rest
+            subdir = ''
+
+            if rest.startswith('Helper_'):
+                rest = rest[7:] # get rid of Helper_
+                subdir = 'helpers/'
+
+            rest = rest + '.php'
+            rest = rest.replace('_', '/')
+
+            module = module[:module.find('_')]
+
+            fname = './portal/' + module.lower() + '/views/' + subdir + rest
+
+            #ress = os.path.isfile(fname)
+            self.printd(fname)
+        else:
+            rest = rest + '.php'
+            rest = rest.replace('_', '/')
+
+            module = module[:module.find('_')]
+
+            fname = './portal/' + module.lower() + '/impl/IW/' + module + '/' + rest
+
+            #ress = os.path.isfile(fname)
+
+        return fname
 
     def getUseNamespacedWordFromLine(self, word, lines, lineNumber):
         line = lines[lineNumber]
