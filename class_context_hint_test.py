@@ -53,7 +53,7 @@ class TestClassContextHint(unittest.TestCase):
 
         actualResult = cch.loadFunctions(lines)
 
-        #print actualResult
+        #print(actualResult)
         self.assertEqual(self._expectedResultFunctions(), actualResult)
 
     def test_loadFunctionsFilteredNotFound(self):
@@ -108,7 +108,7 @@ class TestClassContextHint(unittest.TestCase):
         actualResult = cch.getMethodHintForFile(filename, functionName, False)
 
         # TODO
-        #print actualResult
+        #print(actualResult)
         #self.assertEqual(self._expectedResultForFile(), actualResult)
 
 

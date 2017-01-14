@@ -38,7 +38,7 @@ class TestCodeNavigate(unittest.TestCase):
 
         filenameResult = codeNav.navigateToClass(searchWord, lines, lineNumber)
 
-        print filenameResult
+        print(filenameResult)
 
         self.assertEquals('./portal/cre/views/helpers/CreUrl.php', filenameResult)
 

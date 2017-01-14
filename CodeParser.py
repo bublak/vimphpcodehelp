@@ -428,7 +428,7 @@ class CodeParser:
                 break
             elif hasExtendedNamespace == False:
 
-                if re.search(r"\b"+word+r"\b"+';', lines[i]) > -1:
+                if re.search(r"\b"+word+r"\b"+';', lines[i]):
                     if line.find(" as ") > -1:
                         #This if is for lines like:
                         # use IW\Core\ListView\Service;
@@ -457,4 +457,4 @@ class CodeParser:
             print(string)
 
 if __name__ == '__main__':
-    print 'code navigate main'
+    print('code navigate main')

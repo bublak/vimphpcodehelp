@@ -223,10 +223,13 @@ class TestClassCodeParser(unittest.TestCase):
 
         return lines
 
+    #NOTE
+    #SyntaxError: (unicode error) 'unicodeescape' codec can't decode bytes in
+    #position 12-13: truncated \UXXXXXXXX escape
     def _getLinesForExtendedClassNameWord(self):
         lines = [
             '<?php',
-            'namespace IW\User\Visibility;',
+            r'namespace IW\User\Visibility;',
             '',
             '// \core\modeman',
             'use IW\ModeMan\Instance\Service;',
@@ -239,10 +242,13 @@ class TestClassCodeParser(unittest.TestCase):
 
         return lines
 
+    #NOTE
+    #SyntaxError: (unicode error) 'unicodeescape' codec can't decode bytes in
+    #position 12-13: truncated \UXXXXXXXX escape
     def _getLinesForExtendedClassNameWordB(self):
         lines = [
             '<?php',
-            'namespace IW\User\Visibility;',
+            r'namespace IW\User\Visibility;',
             '',
             '// \core\modeman',
             'use IW\ModeMan\Instance\Service;',

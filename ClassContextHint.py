@@ -54,7 +54,7 @@ class ClassContextHint:
         self.getAncestor(read_data)
         self.loadFunctions(read_data, functionName)
 
-        if self.hints.functions.has_key(functionName):
+        if functionName in self.hints.functions:
             lineNumber = self.hints.functions[functionName].lineNumber + 1
         else:
             return self.hints
@@ -131,7 +131,7 @@ class ClassContextHint:
 
     def loadAttributes(self, lines):
         for line in lines:
-            print line
+            print(line)
 
     def loadFunctions(self, lines, functionName=False):
 
@@ -212,7 +212,7 @@ class ClassContextHint:
             if line != None:
                 line += separator
 
-                print line
+                print(line)
 
 #def printd(string, debug=True):
 def printd(string, debug=False):
@@ -220,6 +220,6 @@ def printd(string, debug=False):
         print(string)
 
 if __name__ == '__main__':
-    print 'calling main'
+    print('calling main')
     #vv = ClassContextHint()
-    #print vv.basic()
+    #print(vv.basic())

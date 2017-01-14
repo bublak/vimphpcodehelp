@@ -1,13 +1,13 @@
-python import sys
+py3 import sys
 
-python import vim
-python sys.path.append(vim.eval('expand("<sfile>:h")'))
+py3 import vim
+py3 sys.path.append(vim.eval('expand("<sfile>:h")'))
 
 "move to class file
 "
 function! PavelNavigateToClass(sCls, lineNumber)
 
-python <<EOF
+py3 <<EOF
 import vim
 
 from CodeNavigate import CodeNavigate
@@ -25,13 +25,13 @@ filename = codeNav.navigateToClass(searchWord, lines, lineNumber)
 if filename != False:
     vim.command('e ' + filename)
 else:
-    print filename
+    print(filename)
 
 EOF
 endfunction
 
 function! PavelGetClassContextData(sCls, lineNumber)
-python << endOfPython
+py3 << endOfPython
 
 from CodeNavigate import CodeNavigate
 
@@ -51,7 +51,7 @@ endfunction
 
 
 function! PavelGetFunctionAnotation(sCls, lineNumber, className)
-python << endOfPython
+py3 << endOfPython
 
 from CodeNavigate import CodeNavigate
 
@@ -70,7 +70,7 @@ endOfPython
 endfunction
 
 function! PavelGetFunctionJump(sCls, lineNumber, className)
-python << endOfPython
+py3 << endOfPython
 
 from CodeNavigate import CodeNavigate
 
@@ -86,10 +86,10 @@ filename            = vim.eval("@%")
 filename = codeNav.getFunctionAnotation(searchWord, classNameOfFunction, lineNumber, lines, filename, True)
 
 if filename != False:
-    #print filename
+    #print(filename)
     vim.command('e ' + filename)
 else:
-    print filename
+    print(filename)
 
 endOfPython
 endfunction
