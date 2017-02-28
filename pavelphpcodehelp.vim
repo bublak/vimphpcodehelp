@@ -93,3 +93,19 @@ else:
 
 endOfPython
 endfunction
+
+
+function! PavelGetUnusedNamespaceDefinitions()
+py3 << endOfPython
+
+from ClassContextHint import ClassContextHint
+
+lines      = vim.current.buffer
+
+cch = ClassContextHint('nic')
+
+cch.checkUnusedNamespaceDefinitions(lines)
+
+endOfPython
+endfunction
+

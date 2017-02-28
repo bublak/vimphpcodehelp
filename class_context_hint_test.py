@@ -4,6 +4,27 @@ from ClassContextHint import ClassContextHint
 
 class TestClassContextHint(unittest.TestCase):
 
+    def test_loadNamespaceDefinitions(self):
+        cch = ClassContextHint('cava')
+        lines = self._getLinesForNamespaceDefinitions()
+
+        result = cch.loadNamespaceDefinitions(lines)
+
+        expectedNames = ['Def', 'first', 'second', 'Third', 'UCF']
+
+        self.assertEquals(expectedNames, result)
+
+    def test_checkUnusedNamespaceDefinitionsForLines(self):
+        cch = ClassContextHint('cava')
+        lines = self._getLinesForNamespaceDefinitions()
+
+        definitions = ['Def', 'first', 'second', 'Third', 'UCF']
+
+        result = cch.checkUnusedNamespaceDefinitionsForLines(lines, definitions)
+
+        expectedResult = ['first', 'second']
+
+        self.assertEquals(expectedResult, result)
     def test_getAncestor(self):
         cch = ClassContextHint('cava')
 
@@ -64,7 +85,7 @@ class TestClassContextHint(unittest.TestCase):
         actualResult = cch.loadFunctions(lines, 'ijk')
 
         self.assertEqual([], actualResult)
-    
+
     def test_loadFunctionsFiltered(self):
         cch = ClassContextHint('bl/bl/a')
 
@@ -154,7 +175,7 @@ class TestClassContextHint(unittest.TestCase):
         ]
 
     def _getLinesForConstants(self):
-        a = ['jedna', 'dve', 'tri', 'const A="43";', 'const B = "44fads";'] 
+        a = ['jedna', 'dve', 'tri', 'const A="43";', 'const B = "44fads";']
         return a
 
     def _getLinesForFunctions(self):
@@ -171,7 +192,7 @@ class TestClassContextHint(unittest.TestCase):
             'public function iJk (', ' $abc, $ddd=null,', ' $d, $e="ble") { ',
             'private function _zZz(){',
             'private function xXx($abc, $kva){'
-        ] 
+        ]
 
         return a
 
@@ -187,7 +208,7 @@ class TestClassContextHint(unittest.TestCase):
             '',
             '',
             ''
-        ] 
+        ]
 
         return a
 
@@ -203,7 +224,32 @@ class TestClassContextHint(unittest.TestCase):
             'a',
             'b',
             'c'
-        ] 
+        ]
+
+        return a
+
+    def _getLinesForNamespaceDefinitions(self):
+        a = [
+            r'namespace afaef\faeggg\affe;',
+            '\n',
+            r'use tada\ble\Def;'
+            '\n',
+            r'use multi\blu\first,'
+            '\n',
+            r'    multi\blu\second,'
+            '\n',
+            r'    tmulti\bla\Third;'
+            '\n',
+            r'use udu\kva\ABC as UCF;'
+            '\n',
+            '',
+            'class Abc extends Def',
+            '{',
+            'new Third',
+            '',
+            'function',
+            'aUCF'
+        ]
 
         return a
 

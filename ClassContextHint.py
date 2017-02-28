@@ -1,11 +1,12 @@
 import re
 from ClassData import *
+from BasicGui import BasicGui
 
 # The processing expect the well formated php code - basic coding standards :)
 class ClassContextHint:
 
     hints = None
-    
+
     def __init__(self, path):
         self.hints = ClassData(path)
 
@@ -82,6 +83,96 @@ class ClassContextHint:
             # add comment to function in ClassData element
             self.hints.addCommentToFunction(functionName, comment)
             return self.hints
+
+    def checkUnusedNamespaceDefinitions(self, lines):
+        definitions = []
+
+        printd( '=============== hledam nepotrebne definice v namespacech')
+        definitions = self.loadNamespaceDefinitions(lines)
+        definitions = self.checkUnusedNamespaceDefinitionsForLines(lines, definitions)
+
+        if len(definitions) > 0:
+
+            definitionsInText = ''
+
+            for definition in definitions:
+                definitionsInText = definitionsInText + definition + "\n"
+
+            basicGui = BasicGui('Unused namespace definitions', definitionsInText, 'nic_file')
+            basicGui.start()
+
+
+    # TODO change name of method
+    def checkUnusedNamespaceDefinitionsForLines(self, lines, definitions):
+        totalLineNumber = len(lines)
+
+        isSearchingClassLine = True;
+        for line in lines:
+            if isSearchingClassLine == True:
+                if line.find('class') > -1:
+                    isSearchingClassLine = False
+                else:
+                    continue
+
+            for definition in definitions:
+                if (line.find(definition)) > -1:
+                    definitions.remove(definition)
+
+        return definitions
+
+    def loadNamespaceDefinitions(self, lines):
+
+        definitions = []
+
+        lineNumber = 0;
+
+        hasActiveBlock = False;
+
+        for line in lines:
+            if line.find('class ') == 0:
+                break
+
+            if hasActiveBlock == True:
+                if line.find(',') > -1:
+                    line = line[:line.find(',')]
+                    definitions.append(self.getNamespaceNamePart(line))
+
+                if line.find(';') > -1:
+                    hasActiveBlock = False;
+
+                    line = line[:line.find(';')]
+                    definitions.append(self.getNamespaceNamePart(line))
+
+            if line.find('use ') > -1:
+                #cut off "use "
+                line = line[4:]
+
+                if line.find(';') == -1:
+                    if line.find(',') > -1:
+                        line = line[:line.find(',')]
+                        definitions.append(self.getNamespaceNamePart(line))
+                    hasActiveBlock = True;
+                else:
+                    if line.find(';') > -1:
+                        line = line[:line.find(';')]
+                        definitions.append(self.getNamespaceNamePart(line))
+
+            lineNumber += 1
+
+        return definitions
+
+    def getNamespaceNamePart(self, line):
+        name = ''
+
+        if line.find(' as ') > -1:
+            line = line[line.find(' as '):]
+            name = line[4:]
+        else:
+            lastPos = line.rfind('\\')
+            name = line[lastPos+1:]
+
+        return name
+
 
     def getContextHintsForFile(self, filename, doPrint=False):
 
