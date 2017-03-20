@@ -309,8 +309,8 @@ class TestClassCodeParser(unittest.TestCase):
             '* @package    Bff',
             '*/',
             'class Bff extends \IW\Cre\Cche\Addp\Mmy',
-            '{'
-            'echo \IW\Int\Cre\Utils\Utils::prettifyXml($event->getRequest());'
+            '{',
+            r'echo \IW\Int\Cre\Utils\Utils::prettifyXml($event->getRequest());'
         ]
 
         return lines

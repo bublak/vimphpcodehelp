@@ -12,7 +12,7 @@ class TestClassContextHint(unittest.TestCase):
 
         expectedNames = ['Def', 'first', 'second', 'Third', 'UCF']
 
-        self.assertEquals(expectedNames, result)
+        self.assertEqual(expectedNames, result)
 
     def test_checkUnusedNamespaceDefinitionsForLines(self):
         cch = ClassContextHint('cava')
@@ -24,16 +24,16 @@ class TestClassContextHint(unittest.TestCase):
 
         expectedResult = ['first', 'second']
 
-        self.assertEquals(expectedResult, result)
+        self.assertEqual(expectedResult, result)
     def test_getAncestor(self):
         cch = ClassContextHint('cava')
 
         lines = self._getLinesForAncestor()
         result = cch.getAncestor(lines)
 
-        self.assertEquals(0, len(cch.hints.functions))
-        self.assertEquals(3, cch.hints.parentClass['lineNumber'])
-        self.assertEquals('Def', cch.hints.parentClass['name'])
+        self.assertEqual(0, len(cch.hints.functions))
+        self.assertEqual(3, cch.hints.parentClass['lineNumber'])
+        self.assertEqual('Def', cch.hints.parentClass['name'])
 
         expectedLines = [
             'namespace afaef\faeggg\affe;',
@@ -45,7 +45,7 @@ class TestClassContextHint(unittest.TestCase):
             ''
         ]
 
-        self.assertEquals(expectedLines, cch.hints.parentClass['lines'])
+        self.assertEqual(expectedLines, cch.hints.parentClass['lines'])
 
         self.assertFalse(result)
 
