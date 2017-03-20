@@ -3,8 +3,22 @@ import unittest
 # example for run one text:
 #python code_parser_test.py TestClassCodeParser.test_startSearchingForNamespacedClassWithUnderscore
 from CodeParser import CodeParser
+from NamespacePathCreator import NamespacePathCreator
 
 class TestClassCodeParser(unittest.TestCase):
+
+    def test_otherNamespaceDefinition(self):
+        namespaceCreator = NamespacePathCreator('bublak\\phpunitmultirunner\\', 'src')
+
+        cch   = CodeParser(namespaceCreator)
+        lines = self._getLinesForOtherNamespaceDefinition()
+
+        word       = 'IExecutor'
+        lineNumber = 15
+
+        actualResult = cch.startSearching(word, lines, lineNumber)
+
+        self.assertEqual('./src/Engines/Executors/IExecutor.php', actualResult)
 
     def test_startSearchingForNamespacedClassWithUnderscore(self):
         cch   = CodeParser()
@@ -315,6 +329,27 @@ class TestClassCodeParser(unittest.TestCase):
 
         return lines
 
+    def _getLinesForOtherNamespaceDefinition(self):
+        lines = [
+            '<?php',
+            'namespace bublak\phpunitmultirunner\Engines;',
+            'use bublak\phpunitmultirunner\Engines\Executors\IExecutor;',
+            '',
+            '/**',
+            '* Some text',
+            '* Some text',
+            '*',
+            '* @author     Some author <author@email.cz>',
+            '* @version    SVN: $Id: Bff.php 145409 1951-09-20 11:02:30Z cc.ccc $',
+            '* @category   Cre',
+            '* @package    Bff',
+            '*/',
+            'abstract class AbstractEngine implements IEngine {',
+            '',
+            'public function __construct(IExecutor $executor, Timer $timer=null) {'
+        ]
+
+        return lines
 
 if __name__ == '__main__':
     unittest.main()

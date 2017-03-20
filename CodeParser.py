@@ -1,23 +1,20 @@
 import re
 import os.path
 
-#TODO nefacha:
-#class Buffer extends Adapter\Memory   -> hledat Memory
-
-#TODO nefacha hledat Singleton:
-#namespace IW\Core;
-#
-#abstract class AbstractService implements InjectableSingleton
-#{
-#
-#    //singleton functionality
-#    use Singleton;
-#
 
 class CodeParser:
 
+    namespaceCreator=None
+
+    def __init__(self, namespaceCreator=None):
+        self.namespaceCreator=namespaceCreator
+
     # NOTE: last char of line is deleted by processing line, so there should be for example ';'
     def _getNamespacedClass(self, line):
+        if self.namespaceCreator != None:
+            result = self.namespaceCreator.create(line)
+            return result
+
         self.printd('vstupuju do getnamespaced class with line:');
         self.printd(line);
         #note: if there is not ' as ' -> the -1 value is returned, which caused cutting the ; at the end of line!!!
