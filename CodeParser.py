@@ -23,6 +23,9 @@ class CodeParser:
         #note: if there is not ' as ' -> the -1 value is returned, which caused cutting the ; at the end of line!!!
         line = line[:line.find(' as ')] 
 
+        if line.startswith('\\'):
+            line = line[1:len(line)] # get rid off ';' at the end of line
+
         if line.find('use ') == 0:
             #cut off "use "
             line = line[4:]
@@ -347,8 +350,17 @@ class CodeParser:
             self.printd('found extended FFFF namespace ' + word)
             word = res.groups()[0]
             self.printd('found extended namespace ' + word)
+
+            if word.startswith('\\'):
+                self.printd('use whole path')
+                result = self._getNamespacedClass(word+';');
+
+                # TODO check result that exist, or leave code flow continue?
+                return result
+
             subPath = word.split('\\')
             self.printd('found subpath for namespace ' + subPath[0])
+
 
         result = False
         i = 0
@@ -380,7 +392,17 @@ class CodeParser:
 
             if hasExtendedNamespace and len(line) > 1:
                 # TODO not work with alias, NO test for alias
-                subLine = line[:-1] # get rid off ';' at the end of line
+                if line.endswith(';'):
+                    subLine = line[:-1] # get rid off ';' at the end of line
+                else:
+                    subLine = line
+
+                self.printd('subline -_________:');
+                self.printd(subLine);
+                self.printd(subPath);
+                self.printd(line);
+                self.printd(line[:-1].endswith(subPath[0]));
+
                 if line[:-1].endswith(subPath[0]):
                     self.printd('hledam castecnou cestu v namespace')
                     subPath.pop(0) # get rid off the path part, which is in namespace definition.

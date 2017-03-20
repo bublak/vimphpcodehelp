@@ -72,8 +72,9 @@ class CodeNavigate:
 
         cch = ClassContextHint("bb") # TODO set path properly
 
+        codeParser = CodeParser()
+
         if functionName != '' and functionName != className:
-            codeParser = CodeParser()
             result = codeParser.startSearching(className, lines, lineNumber)
 
             if result != False:

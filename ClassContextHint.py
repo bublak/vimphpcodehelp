@@ -87,6 +87,7 @@ class ClassContextHint:
     def checkUnusedNamespaceDefinitions(self, lines):
         definitions = []
 
+        # TODO funguje kdyz je soucasti slova?
         printd( '=============== hledam nepotrebne definice v namespacech')
         definitions = self.loadNamespaceDefinitions(lines)
         definitions = self.checkUnusedNamespaceDefinitionsForLines(lines, definitions)
@@ -100,7 +101,6 @@ class ClassContextHint:
 
             basicGui = BasicGui('Unused namespace definitions', definitionsInText, 'nic_file')
             basicGui.start()
-
 
     # TODO change name of method
     def checkUnusedNamespaceDefinitionsForLines(self, lines, definitions):

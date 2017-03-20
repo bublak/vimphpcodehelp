@@ -72,6 +72,16 @@ class TestClassCodeParser(unittest.TestCase):
 
         self.assertEqual('./portal/cre/impl/IW/Cre/Cche/Addp/Mmy.php', actualResult)
 
+    def test_startSearchingForFullPathNamespaceInCode(self):
+        cch   = CodeParser()
+        lines = self._getLinesForFullPathNamespaceInCode()
+
+        word       = 'Mmy'
+        lineNumber = 13
+
+        actualResult = cch.startSearching(word, lines, lineNumber)
+
+        self.assertEqual('./portal/cre/impl/IW/Cre/Cche/Addp/Mmy.php', actualResult)
 
     def test_getFilenameForOldClass(self):
         cch = CodeParser()
@@ -283,6 +293,27 @@ class TestClassCodeParser(unittest.TestCase):
         return lines
 
 
+    def _getLinesForFullPathNamespaceInCode(self):
+        lines = [
+            '<?php',
+            'namespace IW\Cre;',
+            'use IW\Cre\Cche\Addp;',
+            '',
+            '/**',
+            '* Some text',
+            '* Some text',
+            '*',
+            '* @author     Some author <author@email.cz>',
+            '* @version    SVN: $Id: Bff.php 145409 1951-09-20 11:02:30Z cc.ccc $',
+            '* @category   Cre',
+            '* @package    Bff',
+            '*/',
+            'class Bff extends \IW\Cre\Cche\Addp\Mmy',
+            '{'
+            'echo \IW\Int\Cre\Utils\Utils::prettifyXml($event->getRequest());'
+        ]
+
+        return lines
 
 
 if __name__ == '__main__':
