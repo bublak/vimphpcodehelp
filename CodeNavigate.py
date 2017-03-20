@@ -61,7 +61,7 @@ class CodeNavigate:
             item = allHints.get(hh)
             text.extend(item.getAllPrintable('\n      '))
 
-        self._displayText(actualFilePathOrig, text, actualFilePathOrig)
+        self._displayText(actualFilePathOrig, text, actualFilePathOrig, allHints)
 
     # get function anotation comment
     # if the functionName == className, it is use search in actualFilePath (actual file)
@@ -109,8 +109,8 @@ class CodeNavigate:
                 printd(' new parent class: ')
                 printd(actualFilePath)
 
-    def _displayText(self, title, ttext, fileName):
-        basicGui = BasicGui(title, ttext, fileName)
+    def _displayText(self, title, ttext, fileName, hintsData=None):
+        basicGui = BasicGui(title, ttext, fileName, hintsData)
         basicGui.start()
 
 #def printd(string, debug=True):

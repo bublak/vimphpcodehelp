@@ -8,13 +8,41 @@ class BasicGui(th.Thread):
     ttext = ''
     fileName = ''
     window = None
+    ent=None
+    txtFunctionAnotation=None
+    hintsData=None
+    
 
-    def __init__(self, title, ttext, fileName):
+    def __init__(self, title, ttext, fileName, hintsData=None):
         th.Thread.__init__(self)
 
         self.title = title
         self.ttext = ttext
         self.fileName = fileName
+        self.hintsData = hintsData
+
+    # fetch/filter lines according to searched text in Entry field
+    def fetch(self):
+        searchText = self.ent.get()
+
+        text=[]
+        for hh in self.hintsData:
+            text.append('\n= = = = = = = = = =\n')
+            text.append(hh + ': \n')
+            item = self.hintsData.get(hh)
+
+            content = item.getAllPrintable('\n      ')
+
+            newContent=[]
+
+            for line in content:
+                if line.find(searchText) > -1: # namespace definitions ends with class {
+                    newContent.append(line)
+
+            text.extend(newContent)
+
+        self.txtFunctionAnotation.delete('1.0', tk.END)
+        self.txtFunctionAnotation.insert(tk.END, ''.join(text))
 
     def run(self):
         self.window = tk.Tk()
@@ -24,11 +52,22 @@ class BasicGui(th.Thread):
         lblClassName = tk.Label(self.window, text=self.fileName, anchor=tk.NW, justify=tk.LEFT, pady=20)
         lblClassName.pack()
 
+        if self.hintsData:
+            ent = tk.Entry(self.window)
+            ent.insert(0, 'search here ...')
+            ent.pack(side=tk.TOP, fill=tk.X)
+            ent.focus()
+
+            ent.bind('<Return>', (lambda event: self.fetch()))
+            self.ent = ent
+
         #w = Text(self.window, anchor=W, justify=LEFT)
 
         txtFunctionAnotation = tk.Text(self.window)
         txtFunctionAnotation.insert(tk.END, ''.join(self.ttext))
         txtFunctionAnotation.pack(expand=True, fill='both')
+
+        self.txtFunctionAnotation = txtFunctionAnotation
 
         #lblFunctionAnotation = Label(self.window, text=''.join(self.ttext), anchor=NW, justify=LEFT)
         #lblFunctionAnotation.pack()
