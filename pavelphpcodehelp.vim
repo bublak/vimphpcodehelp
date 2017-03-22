@@ -11,8 +11,11 @@ py3 <<EOF
 import vim
 
 from CodeNavigate import CodeNavigate
+from CodeParserBuilder import CodeParserBuilder
 
-codeNav = CodeNavigate()
+codeParser = CodeParserBuilder.build()
+
+codeNav = CodeNavigate(codeParser)
 
 lines      = vim.current.buffer
 searchWord = vim.eval("a:sCls")
@@ -34,6 +37,7 @@ function! PavelGetClassContextData(sCls, lineNumber)
 py3 << endOfPython
 
 from CodeNavigate import CodeNavigate
+from CodeParserBuilder import CodeParserBuilder
 
 lines      = vim.current.buffer
 searchWord = vim.eval("a:sCls")
@@ -42,7 +46,8 @@ lineNumber = int(vim.eval("a:lineNumber"))
 lineNumber = lineNumber - 1 #correction to right line, where is cursor
 filename   = vim.eval("@%")
 
-codeNav = CodeNavigate()
+codeParser = CodeParserBuilder.build()
+codeNav = CodeNavigate(codeParser)
 
 codeNav.getClassContextData(searchWord, lines, lineNumber, filename)
 
@@ -54,8 +59,10 @@ function! PavelGetFunctionAnotation(sCls, lineNumber, className)
 py3 << endOfPython
 
 from CodeNavigate import CodeNavigate
+from CodeParserBuilder import CodeParserBuilder
 
-codeNav = CodeNavigate()
+codeParser = CodeParserBuilder.build()
+codeNav = CodeNavigate(codeParser)
 
 classNameOfFunction = vim.eval("a:className")
 searchWord          = vim.eval("a:sCls")
@@ -73,8 +80,10 @@ function! PavelGetFunctionJump(sCls, lineNumber, className)
 py3 << endOfPython
 
 from CodeNavigate import CodeNavigate
+from CodeParserBuilder import CodeParserBuilder
 
-codeNav = CodeNavigate()
+codeParser = CodeParserBuilder.build()
+codeNav = CodeNavigate(codeParser)
 
 classNameOfFunction = vim.eval("a:className")
 searchWord          = vim.eval("a:sCls")

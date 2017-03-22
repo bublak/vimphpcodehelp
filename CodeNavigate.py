@@ -1,4 +1,3 @@
-from CodeParser import CodeParser
 from BasicGui import BasicGui
 from ClassContextHint import ClassContextHint
 
@@ -11,9 +10,13 @@ from ClassContextHint import ClassContextHint
 
 class CodeNavigate:
 
+    codeParser = None
+
+    def __init__(self, codeParser=None):
+        self.codeParser=codeParser
+
     def navigateToClass(self, className, lines, lineNumber):
-        codeParser = CodeParser()
-        actualFilePath = codeParser.startSearching(className, lines, lineNumber)
+        actualFilePath = self.codeParser.startSearching(className, lines, lineNumber)
 
         return actualFilePath
 
@@ -23,10 +26,8 @@ class CodeNavigate:
         return 'not implemented'
 
     def getClassContextData(self, className, lines, lineNumber, actualFilePath=None):
-        codeParser = CodeParser()
-
         if className != '':
-            result = codeParser.startSearching(className, lines, lineNumber)
+            result = self.codeParser.startSearching(className, lines, lineNumber)
 
             if result != False:
                 actualFilePath = result
@@ -47,7 +48,7 @@ class CodeNavigate:
                 actualFilePath = False
             else:
                 # get the parent class
-                actualFilePath = codeParser.startSearching(
+                actualFilePath = self.codeParser.startSearching(
                     hints.parentClass['name'], hints.parentClass['lines'], lineNumber
                 )
 
@@ -72,10 +73,8 @@ class CodeNavigate:
 
         cch = ClassContextHint("bb") # TODO set path properly
 
-        codeParser = CodeParser()
-
         if functionName != '' and functionName != className:
-            result = codeParser.startSearching(className, lines, lineNumber)
+            result = self.codeParser.startSearching(className, lines, lineNumber)
 
             if result != False:
                 actualFilePath = result
@@ -102,7 +101,7 @@ class CodeNavigate:
                 return False
             else:
                 # get the parent class
-                actualFilePath = codeParser.startSearching(
+                actualFilePath = self.codeParser.startSearching(
                     hints.parentClass['name'], hints.parentClass['lines'], lineNumber
                 )
 
