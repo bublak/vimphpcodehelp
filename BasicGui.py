@@ -36,13 +36,18 @@ class BasicGui(th.Thread):
             newContent=[]
 
             for line in content:
-                if line.find(searchText) > -1: # namespace definitions ends with class {
+                if line.lower().find(searchText.lower()) > -1:
                     newContent.append(line)
 
             text.extend(newContent)
 
         self.txtFunctionAnotation.delete('1.0', tk.END)
         self.txtFunctionAnotation.insert(tk.END, ''.join(text))
+
+    def cleanText(self):
+        self.ent.delete(0, tk.END)
+
+        self.fetch()
 
     def run(self):
         self.window = tk.Tk()
@@ -53,12 +58,16 @@ class BasicGui(th.Thread):
         lblClassName.pack()
 
         if self.hintsData:
+            lblEntry = tk.Label(self.window, text='search: ', anchor=tk.NE, justify=tk.LEFT, pady=20)
+            lblEntry.pack()
+
             ent = tk.Entry(self.window)
-            ent.insert(0, 'search here ...')
+            #ent.insert(0, '')
             ent.pack(side=tk.TOP, fill=tk.X)
             ent.focus()
 
-            ent.bind('<Return>', (lambda event: self.fetch()))
+            ent.bind('<KeyPress>', (lambda event: self.fetch()))
+            ent.bind('<Return>', (lambda event: self.cleanText()))
             self.ent = ent
 
         #w = Text(self.window, anchor=W, justify=LEFT)
