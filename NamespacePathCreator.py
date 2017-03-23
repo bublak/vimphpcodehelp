@@ -7,7 +7,13 @@ class NamespacePathCreator:
         self.namespaceDefinition = namespaceDefinition
         self.path = path + '\\'
 
+        printd(namespaceDefinition)
+        printd(path)
+
     def create(self, line):
+        printd('analyzuju radku v NamespacePathCreator')
+        printd(line)
+
         line = line.replace(self.namespaceDefinition, self.path)
 
         if line.endswith(';'):
@@ -20,3 +26,10 @@ class NamespacePathCreator:
         line = './' + line + '.php'
 
         return line
+
+#def printd(string, debug=True):
+def printd(string, debug=False):
+    if debug == True:
+        print(string)
+
+

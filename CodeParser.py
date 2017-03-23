@@ -11,10 +11,6 @@ class CodeParser:
 
     # NOTE: last char of line is deleted by processing line, so there should be for example ';'
     def _getNamespacedClass(self, line):
-        if self.namespaceCreator != None:
-            result = self.namespaceCreator.create(line)
-            return result
-
         self.printd('vstupuju do getnamespaced class with line:');
         self.printd(line);
         #note: if there is not ' as ' -> the -1 value is returned, which caused cutting the ; at the end of line!!!
@@ -26,6 +22,10 @@ class CodeParser:
         if line.find('use ') == 0:
             #cut off "use "
             line = line[4:]
+
+        if self.namespaceCreator != None:
+            result = self.namespaceCreator.create(line)
+            return result
 
         if line.find("_") > -1:
             line = self.getFilenameForOldClass(line)
