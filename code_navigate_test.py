@@ -1,8 +1,8 @@
 import unittest
 
 from ClassContextHint import ClassContextHint
-from CodeParser import CodeParser
 from CodeNavigate import CodeNavigate
+from CodeParserBuilder import CodeParserBuilder
 
 class TestCodeNavigate(unittest.TestCase):
 
@@ -14,9 +14,9 @@ class TestCodeNavigate(unittest.TestCase):
 
         actualResult = cch.getContextHintsForFile(filename, False)
 
-        self.assertEquals('AbstractVisibility', cch.hints.parentClass['name'])
+        self.assertEqual('AbstractVisibility', cch.hints.parentClass['name'])
 
-        codeParser = CodeParser()
+        codeParser = CodeParserBuilder.build()
 
         lineNumber = 19
 
@@ -24,12 +24,13 @@ class TestCodeNavigate(unittest.TestCase):
             cch.hints.parentClass['name'], cch.hints.parentClass['lines'], lineNumber
         )
 
-        self.assertEquals('./portal/user/impl/IW/User/Visibility/AbstractVisibility.php', parentClassPath)
+        self.assertEqual('./portal/user/impl/IW/User/Visibility/AbstractVisibility.php', parentClassPath)
 
     def test_navigateToClassFilenameBasic(self):
         self.maxDiff = None
 
-        codeNav = CodeNavigate()
+        codeParser = CodeParserBuilder.build()
+        codeNav = CodeNavigate(codeParser)
 
         lines      = self._linesForNavigateToClassFilename()
         searchWord = 'urlHelper'
@@ -40,7 +41,7 @@ class TestCodeNavigate(unittest.TestCase):
 
         print(filenameResult)
 
-        self.assertEquals('./portal/cre/views/helpers/CreUrl.php', filenameResult)
+        self.assertEqual('./portal/cre/views/helpers/CreUrl.php', filenameResult)
 
     def _linesForNavigateToClassFilename(self):
         lines = [
