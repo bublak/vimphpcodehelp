@@ -1,0 +1,5 @@
+#!/bin/sh
+
+python3 class_context_hint_test.py
+python3 code_navigate_test.py
+python3 code_parser_test.py
